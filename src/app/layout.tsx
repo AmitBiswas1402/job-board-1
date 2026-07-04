@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
-import {
-  Inter,
-  Space_Grotesk,
-  JetBrains_Mono,
-} from "next/font/google";
+import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import { ThemeProvider } from "@/components/Themes";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -36,9 +33,19 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${inter.variable} ${space.variable} ${mono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">
-        <ClerkProvider>{children}</ClerkProvider>
+      <body className="min-h-full flex flex-col" suppressHydrationWarning>
+        <ClerkProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </ClerkProvider>
       </body>
     </html>
   );
