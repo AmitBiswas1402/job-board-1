@@ -1,5 +1,6 @@
 "use client";
 
+import Navbar from "@/components/Navbar";
 import { useUser } from "@clerk/nextjs";
 
 const Dashboard = () => {
@@ -8,6 +9,7 @@ const Dashboard = () => {
 
   return (
     <div>
+      <Navbar />
       <h1 className="text-2xl font-bold">Welcome {fullName}</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">

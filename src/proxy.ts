@@ -2,19 +2,21 @@ import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server';
 
 const isPublicRoute = createRouteMatcher([
-  "/", // Landing page only
+  "/", // Landing page
+  "/jobs", // Jobs search page
+  "/api/jobs(.*)", // Jobs APIs (search and seeding)
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
   const { userId } = await auth();
 
   // If signed in and trying to access the landing page,
-  // send them to the dashboard.
+  // send them to the dashboard.z
   if (userId && req.nextUrl.pathname === "/") {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
-  // Protect everything except the landing page.
+  // Protect everything except public routes.
   if (!isPublicRoute(req)) {
     await auth.protect();
   }
@@ -27,6 +29,6 @@ export const config = {
     // Always run for API routes
     '/(api|trpc)(.*)',
     // Always run for Clerk-specific frontend API routes
-    '/__clerk/(.*)',
+    '/__clerk/:path*',
   ],
 };
