@@ -11,7 +11,7 @@ export default clerkMiddleware(async (auth, req) => {
   const { userId } = await auth();
 
   // If signed in and trying to access the landing page,
-  // send them to the dashboard.z
+  // send them to the dashboard.
   if (userId && req.nextUrl.pathname === "/") {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
