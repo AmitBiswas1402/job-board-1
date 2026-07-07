@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { db } from "@/index";
-import { usersTable } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { usersTable, coverLettersTable, applicationsTable } from "@/db/schema";
+import { eq, and } from "drizzle-orm";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { createRequire } from "node:module";
 
@@ -65,6 +65,7 @@ export async function POST(request: Request) {
     const jobTitle = formData.get("jobTitle") as string || "";
     const jobDescription = formData.get("jobDescription") as string || "";
     const approach = formData.get("approach") as string || "Direct";
+    const applicationId = formData.get("applicationId") as string || "";
 
     if (!file) {
       return NextResponse.json(
@@ -172,7 +173,55 @@ Additional Instructions:
       // Clean up any markdown code block formatting if returned by mistake
       const coverLetter = textResponse.trim().replace(/^```[a-zA-Z]*\s*|```$/g, "");
 
-      return NextResponse.json({ coverLetter });
+      // Resolve jobId from application if applicationId is provided
+      let linkedJobId: number | null = null;
+      if (applicationId) {
+        const [app] = await db
+          .select()
+          .from(applicationsTable)
+          .where(
+            and(
+              eq(applicationsTable.id, Number(applicationId)),
+              eq(applicationsTable.userId, dbUser.id)
+            )
+          )
+          .limit(1);
+        if (app) {
+          linkedJobId = app.jobId;
+        }
+      }
+
+      // Store cover letter in database
+      const [insertedLetter] = await db
+        .insert(coverLettersTable)
+        .values({
+          userId: dbUser.id,
+          jobId: linkedJobId,
+          title: jobTitle ? `${jobTitle} Cover Letter` : "Cover Letter",
+          content: coverLetter,
+        })
+        .returning();
+
+      // Link to application if provided
+      if (applicationId) {
+        await db
+          .update(applicationsTable)
+          .set({
+            coverLetterId: insertedLetter.id,
+            updatedAt: new Date(),
+          })
+          .where(
+            and(
+              eq(applicationsTable.id, Number(applicationId)),
+              eq(applicationsTable.userId, dbUser.id)
+            )
+          );
+      }
+
+      return NextResponse.json({ 
+        coverLetter,
+        coverLetterId: insertedLetter.id
+      });
     } catch (apiError: unknown) {
       console.error("Gemini API Error:", apiError);
       const errorMessage = apiError instanceof Error ? apiError.message : String(apiError);

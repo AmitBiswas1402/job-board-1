@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { db } from "@/index";
-import { usersTable, resumesTable, atsReportsTable } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { usersTable, resumesTable, atsReportsTable, applicationsTable } from "@/db/schema";
+import { eq, and } from "drizzle-orm";
 import { v2 as cloudinary } from "cloudinary";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { createRequire } from "node:module";
@@ -72,6 +72,7 @@ export async function POST(request: Request) {
     const jobTitle = formData.get("jobTitle") as string || "";
     const jobDescription = formData.get("jobDescription") as string || "";
     const jobType = formData.get("jobType") as string || "";
+    const applicationId = formData.get("applicationId") as string || "";
 
     if (!file) {
       return NextResponse.json(
@@ -219,6 +220,21 @@ Return only valid JSON.
         suggestions: JSON.stringify(analysisResult.suggestions || []),
       })
       .returning();
+
+    if (applicationId) {
+      await db
+        .update(applicationsTable)
+        .set({
+          resumeId: insertedResume.id,
+          updatedAt: new Date(),
+        })
+        .where(
+          and(
+            eq(applicationsTable.id, Number(applicationId)),
+            eq(applicationsTable.userId, dbUser.id)
+          )
+        );
+    }
 
     return NextResponse.json({
       reportId: insertedReport.id,
