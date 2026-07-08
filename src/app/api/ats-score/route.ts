@@ -226,6 +226,7 @@ Return only valid JSON.
         .update(applicationsTable)
         .set({
           resumeId: insertedResume.id,
+          atsReportId: insertedReport.id,
           updatedAt: new Date(),
         })
         .where(

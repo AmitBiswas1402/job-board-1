@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { 
@@ -30,6 +30,27 @@ export default function ATSScorePage() {
   const [jobTitle, setJobTitle] = useState("");
   const [jobType, setJobType] = useState("Full-time");
   const [jobDescription, setJobDescription] = useState("");
+  
+  const [applicationId, setApplicationId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const appId = params.get("applicationId");
+    if (appId) {
+      setTimeout(() => setApplicationId(appId), 0);
+      // Fetch details to auto-fill
+      fetch(`/api/application-tracker`)
+        .then((res) => res.json())
+        .then((data) => {
+          const matchedApp = data.find((a: { id: number; job: { title: string; description: string | null } }) => a.id === Number(appId));
+          if (matchedApp) {
+            setJobTitle(matchedApp.job.title);
+            setJobDescription(matchedApp.job.description || "");
+          }
+        })
+        .catch((err) => console.error("Auto-fill error:", err));
+    }
+  }, []);
   const [file, setFile] = useState<File | null>(null);
 
   // Upload/evaluation states
@@ -99,6 +120,9 @@ export default function ATSScorePage() {
       formData.append("jobTitle", jobTitle.trim());
       formData.append("jobDescription", jobDescription.trim());
       formData.append("jobType", jobType);
+      if (applicationId) {
+        formData.append("applicationId", applicationId);
+      }
 
       const res = await fetch("/api/ats-score", {
         method: "POST",
@@ -145,6 +169,16 @@ export default function ATSScorePage() {
 
       {/* Main Workspace Frame */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 md:px-8 py-8 md:py-12">
+        {applicationId && (
+          <div className="mb-6">
+            <a
+              href="/visual-whiteboard"
+              className="inline-flex items-center gap-1.5 text-xs text-violet-400 hover:text-violet-300 font-bold"
+            >
+              ← Back to Application Tracker Workspace
+            </a>
+          </div>
+        )}
         
         {/* Header Title section */}
         <div className="flex flex-col items-center text-center mb-10 md:mb-12">

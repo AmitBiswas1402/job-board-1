@@ -5,10 +5,6 @@ const isPublicRoute = createRouteMatcher([
   "/", // Landing page
   "/jobs", // Jobs search page
   "/api/jobs(.*)", // Jobs APIs (search and seeding)
-  "/industry-insights", // Industry insights page
-  "/api/industry-insights(.*)", // Industry insights APIs
-  "/industry-insights", // Industry insights page
-  "/api/industry-insights(.*)", // Industry insights APIs
 ]);
 
 export default clerkMiddleware(async (auth, req) => {

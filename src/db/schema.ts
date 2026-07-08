@@ -1,4 +1,5 @@
 import {
+  boolean,
   integer,
   pgTable,
   text,
@@ -56,8 +57,10 @@ export const applicationsTable = pgTable("applications", {
   jobId: integer().notNull(),
   resumeId: integer(),
   coverLetterId: integer(),
+  atsReportId: integer(),
   status: varchar({ length: 50 }).notNull(),
   notes: text(),
+  archived: boolean().default(false).notNull(),
   appliedAt: timestamp(),
   createdAt: timestamp().defaultNow().notNull(),
   updatedAt: timestamp()
