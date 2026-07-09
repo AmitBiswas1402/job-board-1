@@ -312,3 +312,57 @@ export async function PATCH(request: Request) {
     );
   }
 }
+
+// 4. DELETE: Remove job application folder
+export async function DELETE(request: Request) {
+  try {
+    const dbUser = await getOrCreateDbUser();
+    if (!dbUser) {
+      return NextResponse.json(
+        { error: "Unauthorized. Please sign in." },
+        { status: 401 }
+      );
+    }
+
+    const { searchParams } = new URL(request.url);
+    const applicationId = searchParams.get("applicationId");
+
+    if (!applicationId) {
+      return NextResponse.json(
+        { error: "applicationId is required for deletion." },
+        { status: 400 }
+      );
+    }
+
+    // Delete application record
+    const deleted = await db
+      .delete(applicationsTable)
+      .where(
+        and(
+          eq(applicationsTable.id, Number(applicationId)),
+          eq(applicationsTable.userId, dbUser.id)
+        )
+      )
+      .returning();
+
+    if (deleted.length === 0) {
+      return NextResponse.json(
+        { error: "Application folder not found or unauthorized." },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      message: "Application deleted successfully.",
+      deletedId: Number(applicationId)
+    });
+
+  } catch (error: unknown) {
+    console.error("Application Tracker DELETE Error:", error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return NextResponse.json(
+      { error: "Internal server error: " + errorMessage },
+      { status: 500 }
+    );
+  }
+}

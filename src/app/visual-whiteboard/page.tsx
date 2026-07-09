@@ -11,18 +11,18 @@ import {
   ChevronRight,
   ClipboardCheck,
   FileText,
-  FileBadge,
   Archive,
   ArchiveRestore,
   ExternalLink,
-  Save,
   Plus,
   X,
-  Copy,
   CheckCircle2,
   GitCommit,
-  Columns
+  Columns,
+  Trash2,
+  Globe
 } from "lucide-react";
+import { jsPDF } from "jspdf";
 import {
   DndContext,
   useDraggable,
@@ -123,11 +123,15 @@ export default function VisualWhiteboardPage() {
   // Active dragging card ID
   const [activeDragId, setActiveDragId] = useState<number | null>(null);
 
-  // Drawer local editing states
   const [localNotes, setLocalNotes] = useState("");
-  const [isSavingNotes, setIsSavingNotes] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [isArchiving, setIsArchiving] = useState(false);
   const [copiedLetter, setCopiedLetter] = useState(false);
+
+  // Drawer UI state toggles
+  const [showMoreDesc, setShowMoreDesc] = useState(false);
+  const [atsExpanded, setAtsExpanded] = useState(false);
+  const [letterPreviewOpen, setLetterPreviewOpen] = useState(false);
 
   // Fetch applications on load
   const fetchApplications = async () => {
@@ -155,6 +159,50 @@ export default function VisualWhiteboardPage() {
     }, 0);
     return () => clearTimeout(timer);
   }, []);
+
+  const handleAutoSaveNotes = async (appId: number, notesValue: string) => {
+    try {
+      setSaveStatus("saving");
+      const res = await fetch("/api/application-tracker", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          applicationId: appId,
+          notes: notesValue
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to save notes.");
+      }
+      
+      // Update applications state locally
+      setApplications(prev =>
+        prev.map(app => (app.id === appId ? { ...app, notes: notesValue } : app))
+      );
+      setSaveStatus("saved");
+    } catch (err: unknown) {
+      console.error("Auto-save notes error:", err);
+      setSaveStatus("error");
+    }
+  };
+
+  // Auto-Save Debounce Effect for Personal Notes
+  useEffect(() => {
+    const activeApp = applications.find(a => a.id === selectedAppId);
+    if (!activeApp) return;
+
+    // Check if notes have actually changed from the DB value
+    if (localNotes === (activeApp.notes || "")) {
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      handleAutoSaveNotes(activeApp.id, localNotes);
+    }, 1000); // 1-second debounce
+
+    return () => clearTimeout(timer);
+  }, [localNotes, selectedAppId, applications]);
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveDragId(Number(event.active.id));
@@ -224,33 +272,7 @@ export default function VisualWhiteboardPage() {
     }
   };
 
-  const handleSaveNotes = async (appId: number) => {
-    try {
-      setIsSavingNotes(true);
-      const res = await fetch("/api/application-tracker", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          applicationId: appId,
-          notes: localNotes
-        })
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || "Failed to save notes.");
-      }
-      
-      // Update applications state locally
-      setApplications(prev =>
-        prev.map(app => (app.id === appId ? { ...app, notes: localNotes } : app))
-      );
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : String(err);
-      alert(errorMessage || "Could not save notes.");
-    } finally {
-      setIsSavingNotes(false);
-    }
-  };
+
 
   const handleToggleArchive = async (appId: number, currentArchived: boolean) => {
     try {
@@ -315,6 +337,66 @@ export default function VisualWhiteboardPage() {
   const handleOpenAppDrawer = (app: Application) => {
     setSelectedAppId(app.id);
     setLocalNotes(app.notes || "");
+    setShowMoreDesc(false);
+    setAtsExpanded(false);
+    setLetterPreviewOpen(false);
+  };
+
+
+
+  const handleDeleteApplication = async (appId: number) => {
+    if (!confirm("Are you sure you want to delete this job folder? All linked notes and materials will be removed.")) return;
+    
+    try {
+      const res = await fetch(`/api/application-tracker?applicationId=${appId}`, {
+        method: "DELETE"
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to delete application.");
+      }
+      
+      // Update local state list
+      setApplications(prev => prev.filter(app => app.id !== appId));
+      setSelectedAppId(null);
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : String(err));
+    }
+  };
+
+  const downloadCoverLetterPdf = (company: string, title: string, content: string) => {
+    try {
+      const doc = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+      });
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(11);
+
+      const margin = 20;
+      const width = 170; // 210mm - 40mm
+      const pageHeight = 297;
+
+      const lines = doc.splitTextToSize(content, width);
+      let cursorY = 25;
+
+      for (let i = 0; i < lines.length; i++) {
+        if (cursorY > pageHeight - 25) {
+          doc.addPage();
+          cursorY = 25;
+        }
+        doc.text(lines[i], margin, cursorY);
+        cursorY += 6; // Line height
+      }
+
+      const fileTitle = `${company.trim().toLowerCase().replace(/[^a-z0-9]+/g, "_")}_cover_letter.pdf`;
+      doc.save(fileTitle);
+    } catch (err) {
+      console.error("PDF generation failed:", err);
+      alert("Failed to export PDF file.");
+    }
   };
 
   // Top level statistics
@@ -639,10 +721,10 @@ export default function VisualWhiteboardPage() {
           <div className="absolute inset-0" onClick={() => setSelectedAppId(null)} />
 
           {/* Drawer Inner Panel */}
-          <div className="relative w-full max-w-xl h-full bg-[#090916] border-l border-white/[0.06] shadow-2xl p-6 md:p-8 flex flex-col justify-between overflow-y-auto z-10 animate-slide-in">
+          <div className="relative w-full max-w-xl h-full bg-[#090916] border-l border-l-white/[0.06] shadow-2xl flex flex-col z-10 animate-slide-in">
             
-            {/* Header section */}
-            <div className="space-y-6">
+            {/* STICKY HEADER */}
+            <div className="sticky top-0 bg-[#090916]/95 backdrop-blur-md z-20 border-b border-white/[0.05] p-6 md:p-8 space-y-4">
               <div className="flex justify-between items-start">
                 <div className="flex items-center gap-4">
                   <img
@@ -654,192 +736,185 @@ export default function VisualWhiteboardPage() {
                     alt="avatar"
                   />
                   <div>
-                    <h2 className="text-lg font-black text-white">{selectedApp.job.company}</h2>
-                    <p className="text-xs text-neutral-400 flex items-center gap-1 mt-1 font-medium">
-                      <Briefcase className="w-3.5 h-3.5 text-neutral-500" /> {selectedApp.job.title}
-                    </p>
-                    {selectedApp.job.location && (
-                      <p className="text-[10px] text-neutral-500 flex items-center gap-1 mt-0.5 font-medium">
-                        <MapPin className="w-3.5 h-3.5 text-neutral-600" /> {selectedApp.job.location}
-                      </p>
-                    )}
+                    <h2 className="text-base font-black text-white leading-tight">{selectedApp.job.company}</h2>
+                    <h3 className="text-xs text-neutral-400 font-bold mt-0.5">{selectedApp.job.title}</h3>
+                    <div className="mt-2 flex items-center gap-2">
+                      <span className="text-[9px] uppercase tracking-wider font-black text-violet-300 bg-violet-500/10 border border-violet-500/20 px-2.5 py-0.5 rounded-full">
+                        {selectedApp.status}
+                      </span>
+                      {selectedApp.archived && (
+                        <span className="text-[9px] uppercase tracking-wider font-black text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-0.5 rounded-full">
+                          Archived
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
-                
+
                 <button
                   onClick={() => setSelectedAppId(null)}
-                  className="w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-neutral-400 hover:text-white transition-all"
+                  className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-neutral-400 hover:text-white transition-all border border-white/[0.04]"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
+            </div>
 
-              {/* Status Badge Info */}
-              <div className="flex flex-wrap gap-2.5 items-center">
-                <span className="text-[10px] uppercase tracking-wider font-extrabold text-violet-300 bg-violet-500/10 border border-violet-500/20 px-3 py-1 rounded-full">
-                  Stage: {selectedApp.status}
-                </span>
-                {selectedApp.archived && (
-                  <span className="text-[10px] uppercase tracking-wider font-extrabold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full flex items-center gap-1">
-                    <Archive className="w-3.5 h-3.5" /> Archived
-                  </span>
+            {/* SCROLLABLE BODY */}
+            <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-8 select-text">
+              
+              {/* Section 2: Quick Overview */}
+              <div className="flex flex-wrap gap-x-6 gap-y-3 text-xs font-semibold text-neutral-400 border-b border-white/[0.04] pb-5">
+                {selectedApp.job.location && (
+                  <div className="flex items-center gap-1.5">
+                    <MapPin className="w-4 h-4 text-neutral-500 shrink-0" />
+                    <span>{selectedApp.job.location}</span>
+                  </div>
+                )}
+                {selectedApp.job.employmentType && (
+                  <div className="flex items-center gap-1.5">
+                    <Briefcase className="w-4 h-4 text-neutral-500 shrink-0" />
+                    <span>{selectedApp.job.employmentType}</span>
+                  </div>
                 )}
                 {selectedApp.job.salary && (
-                  <span className="text-[10px] font-extrabold text-emerald-400 bg-emerald-500/5 border border-emerald-500/10 px-3 py-1 rounded-full">
-                    {selectedApp.job.salary}
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-emerald-400 font-extrabold text-sm">💰</span>
+                    <span className="text-emerald-400 font-extrabold">{selectedApp.job.salary}</span>
+                  </div>
                 )}
                 {selectedApp.job.applyUrl && (
                   <a
                     href={selectedApp.job.applyUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[10px] font-bold text-neutral-300 bg-white/[0.04] hover:bg-white/[0.08] px-3 py-1 rounded-full flex items-center gap-1 border border-white/[0.06] transition-all"
+                    className="flex items-center gap-1 text-violet-400 hover:underline font-bold"
                   >
-                    View Original Listing <ExternalLink className="w-3 h-3 text-neutral-400" />
+                    <Globe className="w-4 h-4 shrink-0" />
+                    <span>Source Link</span>
+                    <ExternalLink className="w-3 h-3" />
                   </a>
                 )}
               </div>
 
-              <hr className="border-white/[0.04]" />
-
-              {/* Steps Progress Checklists */}
-              <div className="bg-white/[0.01] border border-white/[0.03] rounded-2xl p-4 space-y-3">
-                <h4 className="text-[10px] uppercase tracking-wider font-extrabold text-neutral-500">
-                  Folder Timeline Progress
-                </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-semibold text-neutral-400">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-violet-400 shrink-0" />
-                    <span className="text-white font-sans">Job Saved</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className={`w-4 h-4 shrink-0 ${selectedApp.resume ? "text-violet-400" : "text-neutral-600"}`} />
-                    <span className={selectedApp.resume ? "text-white" : ""}>Resume Attached</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className={`w-4 h-4 shrink-0 ${selectedApp.atsReport ? "text-violet-400" : "text-neutral-600"}`} />
-                    <span className={selectedApp.atsReport ? "text-white" : ""}>ATS Checked</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className={`w-4 h-4 shrink-0 ${selectedApp.coverLetter ? "text-violet-400" : "text-neutral-600"}`} />
-                    <span className={selectedApp.coverLetter ? "text-white" : ""}>Cover Letter Ready</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className={`w-4 h-4 shrink-0 ${["Applied", "Assessment", "Interview", "HR", "Offer"].includes(selectedApp.status) ? "text-violet-400" : "text-neutral-600"}`} />
-                    <span className={["Applied", "Assessment", "Interview", "HR", "Offer"].includes(selectedApp.status) ? "text-white" : ""}>Applied Stage</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Resume File details */}
-              <div className="space-y-2">
-                <h4 className="text-[10px] uppercase tracking-wider font-extrabold text-neutral-500">
-                  Resume Used
-                </h4>
+              {/* Section 3: Resume */}
+              <div className="space-y-3">
+                <h4 className="text-[10px] uppercase tracking-wider font-extrabold text-neutral-500">Resume</h4>
                 {selectedApp.resume ? (
-                  <div className="flex justify-between items-center bg-white/[0.02] border border-white/[0.06] rounded-xl p-3.5">
-                    <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="flex justify-between items-center bg-white/[0.02] border border-white/[0.05] rounded-2xl p-4">
+                    <div className="flex items-center gap-3 min-w-0">
                       <FileText className="w-5 h-5 text-violet-400 shrink-0" />
                       <div className="min-w-0">
                         <p className="text-xs font-bold text-white truncate">{selectedApp.resume.fileName}</p>
-                        <p className="text-[10px] text-neutral-500 font-medium">Cloudinary storage index</p>
+                        <p className="text-[9px] text-neutral-500 font-bold mt-0.5">Linked to folder</p>
                       </div>
                     </div>
-                    <a
-                      href={selectedApp.resume.fileUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-3 py-1.5 text-[10px] font-bold text-white bg-white/5 hover:bg-white/10 rounded-lg flex items-center gap-1 transition-all"
-                    >
-                      View <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
+                    <div className="flex items-center gap-2">
+                      <a
+                        href={selectedApp.resume.fileUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-3 py-1.5 text-[10px] font-black text-white bg-white/5 hover:bg-white/10 rounded-xl flex items-center gap-1 border border-white/[0.04] transition-all"
+                      >
+                        View <ExternalLink className="w-3.5 h-3.5" />
+                      </a>
+                      <a
+                        href={`/ats-score?applicationId=${selectedApp.id}`}
+                        className="px-3 py-1.5 text-[10px] font-black text-neutral-400 hover:text-white bg-white/[0.01] hover:bg-white/5 rounded-xl border border-white/[0.04] transition-all"
+                      >
+                        Replace
+                      </a>
+                    </div>
                   </div>
                 ) : (
-                  <div className="bg-white/[0.01] border border-dashed border-white/[0.08] rounded-xl p-6 text-center">
-                    <p className="text-xs text-neutral-400 mb-3">No resume uploaded to this folder yet.</p>
+                  <div className="bg-white/[0.01] border border-dashed border-white/[0.08] rounded-2xl p-6 text-center">
+                    <p className="text-xs text-neutral-400 mb-3">No Resume Attached</p>
                     <a
                       href={`/ats-score?applicationId=${selectedApp.id}`}
-                      className="inline-flex items-center gap-1 bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs px-3.5 py-1.5 rounded-lg transition-all"
+                      className="inline-flex items-center gap-1.5 bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all"
                     >
-                      <Plus className="w-4 h-4" /> Link Resume via ATS
+                      <Plus className="w-4 h-4" /> Upload Resume
                     </a>
                   </div>
                 )}
               </div>
 
-              {/* ATS matching report */}
-              <div className="space-y-2">
-                <h4 className="text-[10px] uppercase tracking-wider font-extrabold text-neutral-500">
-                  ATS Score Report
-                </h4>
+              {/* Section 4: ATS */}
+              <div className="space-y-3 border-t border-white/[0.04] pt-6">
+                <h4 className="text-[10px] uppercase tracking-wider font-extrabold text-neutral-500">ATS Report</h4>
                 {selectedApp.atsReport ? (
-                  <div className="bg-[#0b0b18] border border-white/[0.06] rounded-2xl p-4 space-y-4">
+                  <div className="bg-[#0b0b18] border border-white/[0.05] rounded-2xl p-4 space-y-4">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <FileBadge className="w-5 h-5 text-emerald-400" />
-                        <span className="text-xs font-black text-white">Gemini Scoring Benchmark</span>
+                      <div>
+                        <span className="text-xs font-black text-white block">Gemini Scoring Benchmark</span>
+                        <span className="text-[10px] text-emerald-400 font-extrabold mt-0.5 block">
+                          {selectedApp.atsReport.score >= 80 ? "Excellent Match" : selectedApp.atsReport.score >= 60 ? "Good Match" : "Needs Optimization"}
+                        </span>
                       </div>
-                      <span className="text-sm font-black text-emerald-400 bg-emerald-500/5 px-2.5 py-0.5 rounded-full border border-emerald-500/10">
-                        Score: {selectedApp.atsReport.score}%
+                      <span className="text-sm font-black text-emerald-400 bg-emerald-500/5 px-2.5 py-0.5 rounded-lg border border-emerald-500/10 font-bold">
+                        {selectedApp.atsReport.score}% Match
                       </span>
                     </div>
 
                     {/* Progress bar */}
                     <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden">
                       <div
-                        className="bg-emerald-400 h-full rounded-full"
+                        className="bg-emerald-400 h-full rounded-full animate-progress"
                         style={{ width: `${selectedApp.atsReport.score}%` }}
                       />
                     </div>
 
-                    {/* Missing keywords chips */}
-                    {selectedApp.atsReport.missingKeywords && (
-                      <div className="space-y-1.5">
-                        <p className="text-[10px] font-extrabold text-neutral-500 uppercase tracking-wider">
-                          Missing Keywords
-                        </p>
-                        <div className="flex flex-wrap gap-1.5">
-                          {(() => {
-                            try {
-                              const keywords: string[] = JSON.parse(selectedApp.atsReport.missingKeywords || "[]");
-                              if (!keywords || keywords.length === 0) {
-                                return <span className="text-xs text-neutral-500">None detected</span>;
-                              }
-                              return keywords.map((k, i) => (
-                                <span
-                                  key={i}
-                                  className="px-2 py-0.5 text-[10px] font-bold text-rose-300 bg-rose-500/5 border border-rose-500/10 rounded"
-                                >
-                                  {k}
-                                </span>
-                              ));
-                            } catch {
-                              return <span className="text-xs text-neutral-400">{selectedApp.atsReport.missingKeywords}</span>;
-                            }
-                          })()}
-                        </div>
+                    {/* Collapsible View Report Details */}
+                    {atsExpanded && (
+                      <div className="space-y-4 pt-3 border-t border-white/[0.04] animate-fade-in">
+                        {selectedApp.atsReport.missingKeywords && (
+                          <div className="space-y-1.5">
+                            <p className="text-[10px] font-extrabold text-neutral-500 uppercase tracking-wider">
+                              Missing Keywords
+                            </p>
+                            <div className="flex flex-wrap gap-1.5">
+                              {(() => {
+                                try {
+                                  const keywords: string[] = JSON.parse(selectedApp.atsReport.missingKeywords || "[]");
+                                  if (!keywords || keywords.length === 0) return <span className="text-xs text-neutral-500">None detected</span>;
+                                  return keywords.map((k, i) => (
+                                    <span key={i} className="px-2 py-0.5 text-[9px] font-bold text-rose-300 bg-rose-500/5 border border-rose-500/10 rounded">
+                                      {k}
+                                    </span>
+                                  ));
+                                } catch {
+                                  return <span className="text-xs text-neutral-400">{selectedApp.atsReport.missingKeywords}</span>;
+                                }
+                              })()}
+                            </div>
+                          </div>
+                        )}
+                        {selectedApp.atsReport.suggestions && (
+                          <div className="space-y-1.5">
+                            <p className="text-[10px] font-extrabold text-neutral-500 uppercase tracking-wider">
+                              Suggestions
+                            </p>
+                            <p className="text-xs text-neutral-300 leading-relaxed font-medium">
+                              {selectedApp.atsReport.suggestions}
+                            </p>
+                          </div>
+                        )}
                       </div>
                     )}
 
-                    {/* Recommendations suggestions */}
-                    {selectedApp.atsReport.suggestions && (
-                      <div className="space-y-1.5 border-t border-white/[0.04] pt-3">
-                        <p className="text-[10px] font-extrabold text-neutral-500 uppercase tracking-wider">
-                          Improvement Suggestions
-                        </p>
-                        <p className="text-xs text-neutral-300 leading-relaxed font-medium">
-                          {selectedApp.atsReport.suggestions}
-                        </p>
-                      </div>
-                    )}
+                    <button
+                      onClick={() => setAtsExpanded(!atsExpanded)}
+                      className="w-full py-2 bg-white/5 hover:bg-white/10 rounded-xl text-[10px] font-black text-white border border-white/[0.04] transition-all text-center font-bold"
+                    >
+                      {atsExpanded ? "Hide Details" : "View Report"}
+                    </button>
                   </div>
                 ) : (
-                  <div className="bg-white/[0.01] border border-dashed border-white/[0.08] rounded-xl p-6 text-center">
-                    <p className="text-xs text-neutral-400 mb-3">No ATS assessment found for this folder.</p>
+                  <div className="bg-white/[0.01] border border-dashed border-white/[0.08] rounded-2xl p-6 text-center">
+                    <p className="text-xs text-neutral-400 mb-3">No ATS Report</p>
                     <a
                       href={`/ats-score?applicationId=${selectedApp.id}`}
-                      className="inline-flex items-center gap-1 bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs px-3.5 py-1.5 rounded-lg transition-all"
+                      className="inline-flex items-center gap-1.5 bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all"
                     >
                       <Sparkles className="w-4 h-4" /> Run ATS Assessment
                     </a>
@@ -847,37 +922,52 @@ export default function VisualWhiteboardPage() {
                 )}
               </div>
 
-              {/* Cover Letter Panel details */}
-              <div className="space-y-2">
-                <h4 className="text-[10px] uppercase tracking-wider font-extrabold text-neutral-500">
-                  Cover Letter Generated
-                </h4>
+              {/* Section 5: Cover Letter */}
+              <div className="space-y-3 border-t border-white/[0.04] pt-6">
+                <h4 className="text-[10px] uppercase tracking-wider font-extrabold text-neutral-500">Cover Letter</h4>
                 {selectedApp.coverLetter ? (
-                  <div className="bg-[#0b0b18] border border-white/[0.06] rounded-2xl p-4 space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs font-bold text-white">{selectedApp.coverLetter.title}</span>
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => copyToClipboard(selectedApp.coverLetter!.content)}
-                          className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-neutral-400 hover:text-white transition-all text-[10px] font-bold flex items-center gap-1"
-                        >
-                          {copiedLetter ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                          {copiedLetter ? "Copied" : "Copy"}
-                        </button>
-                      </div>
+                  <div className="bg-[#0b0b18] border border-white/[0.05] rounded-2xl p-4 space-y-4">
+                    <div>
+                      <span className="text-xs font-bold text-white block">{selectedApp.coverLetter.title}</span>
+                      <span className="text-[9px] text-neutral-500 font-bold mt-0.5 block">Linked to folder</span>
                     </div>
-                    <textarea
-                      readOnly
-                      value={selectedApp.coverLetter.content}
-                      className="w-full h-40 bg-white/[0.02] border border-white/[0.06] rounded-xl p-3 text-xs text-neutral-300 focus:outline-none resize-none font-medium leading-relaxed"
-                    />
+
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setLetterPreviewOpen(!letterPreviewOpen)}
+                        className="flex-1 py-2 bg-white/5 hover:bg-white/10 rounded-xl text-[10px] font-black text-white border border-white/[0.04] transition-all text-center font-bold"
+                      >
+                        Preview
+                      </button>
+                      <button
+                        onClick={() => copyToClipboard(selectedApp.coverLetter!.content)}
+                        className="flex-1 py-2 bg-white/5 hover:bg-white/10 rounded-xl text-[10px] font-black text-white border border-white/[0.04] transition-all text-center font-bold"
+                      >
+                        {copiedLetter ? "✓ Copied" : "Copy"}
+                      </button>
+                      <button
+                        onClick={() => downloadCoverLetterPdf(selectedApp.job.company, selectedApp.coverLetter!.title, selectedApp.coverLetter!.content)}
+                        className="flex-1 py-2 bg-white/5 hover:bg-white/10 rounded-xl text-[10px] font-black text-white border border-white/[0.04] transition-all text-center font-bold"
+                      >
+                        Download
+                      </button>
+                    </div>
+
+                    {/* Preview collapsing letter block */}
+                    {letterPreviewOpen && (
+                      <textarea
+                        readOnly
+                        value={selectedApp.coverLetter.content}
+                        className="w-full h-40 bg-white/[0.02] border border-white/[0.06] rounded-xl p-3 text-xs text-neutral-300 focus:outline-none resize-none font-medium leading-relaxed"
+                      />
+                    )}
                   </div>
                 ) : (
-                  <div className="bg-white/[0.01] border border-dashed border-white/[0.08] rounded-xl p-6 text-center">
-                    <p className="text-xs text-neutral-400 mb-3">No cover letter created for this folder.</p>
+                  <div className="bg-white/[0.01] border border-dashed border-white/[0.08] rounded-2xl p-6 text-center">
+                    <p className="text-xs text-neutral-400 mb-3">No Cover Letter Generated</p>
                     <a
                       href={`/cover-letter?applicationId=${selectedApp.id}`}
-                      className="inline-flex items-center gap-1 bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs px-3.5 py-1.5 rounded-lg transition-all"
+                      className="inline-flex items-center gap-1.5 bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all"
                     >
                       <FileText className="w-4 h-4" /> Draft Cover Letter
                     </a>
@@ -885,47 +975,188 @@ export default function VisualWhiteboardPage() {
                 )}
               </div>
 
-              {/* Personal Notes updates */}
-              <div className="space-y-2">
-                <h4 className="text-[10px] uppercase tracking-wider font-extrabold text-neutral-500">
-                  Folder Notes
-                </h4>
-                <div className="space-y-3">
+              {/* Section 6: Notes */}
+              <div className="space-y-3 border-t border-white/[0.04] pt-6">
+                <div className="flex justify-between items-center">
+                  <h4 className="text-[10px] uppercase tracking-wider font-extrabold text-neutral-500 flex items-center gap-1.5">
+                    <span>📝 Personal Notes</span>
+                  </h4>
+                  <div className="text-[10px] font-bold">
+                    {saveStatus === "saving" && (
+                      <span className="text-amber-400 animate-pulse">Saving...</span>
+                    )}
+                    {saveStatus === "saved" && (
+                      <span className="text-emerald-400">✓ Saved</span>
+                    )}
+                    {saveStatus === "error" && (
+                      <span className="text-rose-400">Failed to save</span>
+                    )}
+                  </div>
+                </div>
+                
+                <p className="text-[11px] text-neutral-400 font-medium leading-relaxed">
+                  Keep reminders, follow-ups, recruiter details, interview tips, or anything related to this application.
+                </p>
+
+                <div className="space-y-2">
                   <textarea
                     value={localNotes}
-                    onChange={(e) => setLocalNotes(e.target.value)}
-                    placeholder="E.g. Referred by Lead Engineer, follow-up on next Monday..."
-                    className="w-full h-24 bg-white/[0.02] border border-white/[0.06] rounded-xl p-3.5 text-xs text-white focus:outline-none focus:border-violet-500/50 resize-none font-medium placeholder-neutral-755"
+                    onChange={(e) => {
+                      if (e.target.value.length <= 2000) {
+                        setLocalNotes(e.target.value);
+                        setSaveStatus("saving");
+                      }
+                    }}
+                    placeholder="E.g. Applied through LinkedIn. Recruiter Sarah. Follow-up Friday. Need React revision."
+                    className="w-full h-32 bg-white/[0.02] border border-white/[0.06] rounded-xl p-3.5 text-xs text-white focus:outline-none focus:border-violet-500/50 resize-none font-medium placeholder-neutral-700 leading-relaxed"
                   />
-                  <div className="flex justify-end">
-                    <button
-                      disabled={isSavingNotes}
-                      onClick={() => handleSaveNotes(selectedApp.id)}
-                      className="inline-flex items-center gap-1.5 bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all"
-                    >
-                      <Save className="w-4 h-4" />
-                      {isSavingNotes ? "Saving..." : "Save Notes"}
-                    </button>
+                  <div className="flex justify-between items-center text-[10px] text-neutral-500 font-bold">
+                    <span>Private notes, auto-saves dynamically</span>
+                    <span>{localNotes.length} / 2000</span>
                   </div>
                 </div>
               </div>
 
-            </div>
+              {/* Section 7: Timeline */}
+              <div className="space-y-3 border-t border-white/[0.04] pt-6">
+                <h4 className="text-[10px] uppercase tracking-wider font-extrabold text-neutral-500">Timeline</h4>
+                <div className="bg-[#0b0b18]/40 border border-white/[0.04] rounded-2xl p-4 space-y-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400 text-[10px] font-black shrink-0 mt-0.5">1</div>
+                    <div>
+                      <p className="text-xs font-bold text-white">Job Saved</p>
+                      <p className="text-[9px] text-neutral-500 font-bold mt-0.5">
+                        {new Date(selectedApp.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                      </p>
+                    </div>
+                  </div>
 
-            {/* Bottom Actions footer */}
-            <div className="border-t border-white/[0.05] pt-6 flex justify-between gap-4 mt-8">
-              <button
-                disabled={isArchiving}
-                onClick={() => handleToggleArchive(selectedApp.id, selectedApp.archived)}
-                className={`flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold border transition-all ${
-                  selectedApp.archived
-                    ? "bg-amber-500/10 text-amber-300 border-amber-500/20 hover:bg-amber-500/20"
-                    : "bg-white/[0.02] text-neutral-400 border-white/[0.06] hover:bg-white/[0.05]"
-                }`}
-              >
-                {selectedApp.archived ? <ArchiveRestore className="w-4 h-4" /> : <Archive className="w-4 h-4" />}
-                {isArchiving ? "Updating..." : selectedApp.archived ? "Restore Folder" : "Archive Folder"}
-              </button>
+                  {/* If status is beyond Saved, show Applied milestone */}
+                  {["Applied", "Assessment", "Interview", "HR", "Offer", "Rejected"].includes(selectedApp.status) && (
+                    <div className="flex items-start gap-3 border-t border-white/[0.03] pt-3.5">
+                      <div className="w-6 h-6 rounded-full bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 text-[10px] font-black shrink-0 mt-0.5">2</div>
+                      <div>
+                        <p className="text-xs font-bold text-white">Applied</p>
+                        <p className="text-[9px] text-neutral-500 font-bold mt-0.5">
+                          {selectedApp.appliedAt 
+                            ? new Date(selectedApp.appliedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+                            : "Pending date sync"}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* If status is Assessment, Interview, HR, Offer, or Rejected, show latest progress */}
+                  {["Assessment", "Interview", "HR", "Offer", "Rejected"].includes(selectedApp.status) && (
+                    <div className="flex items-start gap-3 border-t border-white/[0.03] pt-3.5">
+                      <div className="w-6 h-6 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 text-[10px] font-black shrink-0 mt-0.5">3</div>
+                      <div>
+                        <p className="text-xs font-bold text-white">Active Stage: {selectedApp.status}</p>
+                        <p className="text-[9px] text-neutral-500 font-bold mt-0.5">
+                          Updated {new Date(selectedApp.updatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Section 8: Job Details */}
+              <div className="space-y-3 border-t border-white/[0.04] pt-6">
+                <h4 className="text-[10px] uppercase tracking-wider font-extrabold text-neutral-500">Job Details</h4>
+                <div className="bg-[#0b0b18]/40 border border-white/[0.04] rounded-2xl p-4 space-y-4 text-xs font-semibold text-neutral-300">
+                  <div className="grid grid-cols-2 gap-y-2 border-b border-white/[0.03] pb-3">
+                    <span className="text-neutral-500 font-bold">Company</span>
+                    <span className="text-white text-right truncate font-bold">{selectedApp.job.company}</span>
+                    
+                    <span className="text-neutral-500 font-bold">Role</span>
+                    <span className="text-white text-right truncate font-bold">{selectedApp.job.title}</span>
+
+                    <span className="text-neutral-500 font-bold">Location</span>
+                    <span className="text-white text-right truncate font-bold">{selectedApp.job.location || "N/A"}</span>
+
+                    <span className="text-neutral-500 font-bold">Employment</span>
+                    <span className="text-white text-right truncate font-bold">{selectedApp.job.employmentType || "N/A"}</span>
+
+                    <span className="text-neutral-500 font-bold">Salary</span>
+                    <span className="text-emerald-400 text-right truncate font-black">{selectedApp.job.salary || "N/A"}</span>
+                  </div>
+
+                  <div className="space-y-2">
+                    <span className="text-[10px] uppercase tracking-wider font-extrabold text-neutral-500 block">Description</span>
+                    <p className={`text-neutral-300 leading-relaxed font-medium text-[11px] whitespace-pre-line ${showMoreDesc ? "" : "line-clamp-4"}`}>
+                      {selectedApp.job.description || "No description loaded."}
+                    </p>
+                    {selectedApp.job.description && selectedApp.job.description.length > 200 && (
+                      <button
+                        onClick={() => setShowMoreDesc(!showMoreDesc)}
+                        className="text-[10px] text-violet-400 hover:text-violet-300 font-black underline mt-1 block"
+                      >
+                        {showMoreDesc ? "Show Less" : "Show More"}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Section 9: Actions */}
+              <div className="space-y-3 border-t border-white/[0.04] pt-6 pb-4">
+                <h4 className="text-[10px] uppercase tracking-wider font-extrabold text-neutral-500">Actions</h4>
+                <div className="grid grid-cols-2 gap-3">
+                  
+                  {/* Status Dropdown/Move Action */}
+                  <div className="col-span-2">
+                    <label className="text-[9px] uppercase tracking-wider font-extrabold text-neutral-500 block mb-1">
+                      Move Application Stage
+                    </label>
+                    <select
+                      value={selectedApp.status}
+                      onChange={(e) => handleUpdateStatusDirect(selectedApp.id, e.target.value)}
+                      className="w-full bg-white/[0.02] border border-white/[0.06] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-violet-500/50 appearance-none cursor-pointer font-bold"
+                    >
+                      {STAGES.map((st) => (
+                        <option key={st} value={st} className="bg-[#090916]">
+                          {st}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <button
+                    disabled={isArchiving}
+                    onClick={() => handleToggleArchive(selectedApp.id, selectedApp.archived)}
+                    className={`inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold border transition-all ${
+                      selectedApp.archived
+                        ? "bg-amber-500/10 text-amber-300 border-amber-500/20 hover:bg-amber-500/20"
+                        : "bg-white/[0.02] text-neutral-400 border-white/[0.06] hover:bg-white/[0.05]"
+                    }`}
+                  >
+                    {selectedApp.archived ? <ArchiveRestore className="w-4 h-4" /> : <Archive className="w-4 h-4" />}
+                    {selectedApp.archived ? "Restore" : "Archive"}
+                  </button>
+
+                  <button
+                    onClick={() => handleDeleteApplication(selectedApp.id)}
+                    className="inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold bg-rose-500/5 border border-rose-500/10 text-rose-400 hover:bg-rose-500/10 transition-all"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Delete
+                  </button>
+
+                  {selectedApp.job.applyUrl && (
+                    <a
+                      href={selectedApp.job.applyUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="col-span-2 inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold bg-violet-600 hover:bg-violet-700 text-white transition-all shadow-md"
+                    >
+                      Open Job Listing <ExternalLink className="w-4 h-4" />
+                    </a>
+                  )}
+
+                </div>
+              </div>
+
             </div>
 
           </div>
