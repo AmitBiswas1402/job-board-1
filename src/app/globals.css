@@ -129,3 +129,79 @@
     @apply font-sans;
   }
 }
+
+/* Vertex Design System Utilities */
+@layer components {
+  /* Structural border-grid container (Vertex signature) */
+  .vertex-container {
+    @apply border-x border-dashed border-border max-w-6xl mx-auto;
+  }
+
+  /* Section divider with dashed border */
+  .vertex-section {
+    @apply border-b border-dashed border-border py-16 md:py-24 px-6 md:px-12;
+  }
+
+  /* Card pattern matching Vertex's elevated surfaces */
+  .vertex-card {
+    @apply bg-card border rounded-2xl shadow-sm transition-shadow duration-300 hover:shadow-lg;
+  }
+
+  /* Pill badge (AI-native badge style) */
+  .vertex-badge {
+    @apply inline-flex items-center gap-2 bg-card border rounded-full px-3 py-1 text-xs font-medium text-muted-foreground;
+  }
+
+  /* Premium CTA button with Vertex drop shadow */
+  .vertex-cta {
+    @apply bg-primary text-primary-foreground shadow-md shadow-black/15 hover:bg-primary/90 active:scale-[0.98] transition-all duration-150;
+  }
+
+  /* Outlined secondary button */
+  .vertex-outline {
+    @apply border bg-background hover:bg-accent active:scale-[0.98] transition-all duration-150;
+  }
+
+  /* Nav link hover effect */
+  .vertex-nav-link {
+    @apply text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-foreground/5 rounded-md px-3 py-2 transition-colors duration-200;
+  }
+
+  /* Input field styling */
+  .vertex-input {
+    @apply w-full bg-background border rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-ring transition-all;
+  }
+
+  /* Section heading */
+  .vertex-heading {
+    @apply text-4xl font-semibold tracking-tight text-balance text-foreground;
+  }
+
+  /* Subheading / description text */
+  .vertex-subtext {
+    @apply text-muted-foreground text-balance leading-relaxed;
+  }
+}
+
+/* Smooth animations */
+@keyframes vertex-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes vertex-slide-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-vertex-fade-in {
+  animation: vertex-fade-in 0.5s ease-out both;
+}
+
+.animate-vertex-slide-up {
+  animation: vertex-slide-up 0.6s ease-out both;
+}
+
+.animate-vertex-slide-up-delay {
+  animation: vertex-slide-up 0.6s ease-out 0.15s both;
+}
