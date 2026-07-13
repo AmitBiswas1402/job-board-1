@@ -205,3 +205,32 @@
 .animate-vertex-slide-up-delay {
   animation: vertex-slide-up 0.6s ease-out 0.15s both;
 }
+
+/* Blue edge container glow (Vertex signature) */
+.vertex-edge-glow {
+  position: relative;
+}
+
+.vertex-edge-glow::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -1px;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(180deg, transparent 0%, rgba(56, 189, 248, 0.4) 30%, rgba(59, 130, 246, 0.4) 70%, transparent 100%);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.vertex-edge-glow::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -1px;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(180deg, transparent 0%, rgba(56, 189, 248, 0.4) 30%, rgba(59, 130, 246, 0.4) 70%, transparent 100%);
+  pointer-events: none;
+  z-index: 10;
+}

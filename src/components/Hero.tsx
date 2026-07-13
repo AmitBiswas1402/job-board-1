@@ -7,7 +7,11 @@ import Link from "next/link";
 
 const Hero = () => {
   return (
-    <section className="vertex-section">
+    <section className="vertex-section relative">
+      {/* Intersection grid crosshairs */}
+      <div className="absolute -top-[5px] -left-[5px] text-muted-foreground/30 font-mono text-[10px] select-none pointer-events-none">+</div>
+      <div className="absolute -top-[5px] -right-[5px] text-muted-foreground/30 font-mono text-[10px] select-none pointer-events-none">+</div>
+
       <div className="max-w-4xl mx-auto flex flex-col items-center text-center space-y-8">
         {/* AI Badge */}
         <motion.div

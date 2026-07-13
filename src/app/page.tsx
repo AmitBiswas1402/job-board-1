@@ -28,17 +28,25 @@ const Home = () => {
     <div className="min-h-screen bg-background">
       <HomeNavbar />
       
-      {/* Hero Section Container */}
-      <div className="vertex-container">
+      {/* Centralized container with signature dashed borders and blue edge glows */}
+      <div className="vertex-container vertex-edge-glow">
+        {/* Hero Section */}
         <Hero />
-      </div>
 
-      {/* Feature Showcase Grid (Dashed-border columns, scrolling elements) */}
-      <div className="vertex-container space-y-0">
-        
         {/* Section 1: Jobs */}
-        <section id="jobs" className="vertex-section grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-5 space-y-6 animate-vertex-slide-up">
+        <motion.section 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          id="jobs" 
+          className="vertex-section grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative"
+        >
+          {/* Intersection grid crosshairs */}
+          <div className="absolute -top-[5px] -left-[5px] text-muted-foreground/30 font-mono text-[10px] select-none pointer-events-none">+</div>
+          <div className="absolute -top-[5px] -right-[5px] text-muted-foreground/30 font-mono text-[10px] select-none pointer-events-none">+</div>
+
+          <div className="lg:col-span-5 space-y-6">
             <div className="vertex-badge">
               <Briefcase className="size-3.5 text-foreground/75" />
               <span>Job Discovery Engine</span>
@@ -58,7 +66,7 @@ const Home = () => {
           </div>
 
           <div className="lg:col-span-7">
-            <div className="border border-border/60 bg-card/60 backdrop-blur-sm rounded-2xl p-6 shadow-xl relative overflow-hidden">
+            <div className="border border-border/60 bg-card/60 backdrop-blur-sm rounded-2xl p-6 shadow-xl relative overflow-hidden transition-all duration-300 hover:scale-[1.01]">
               {/* Window chrome bar */}
               <div className="flex items-center justify-between pb-4 border-b border-border/40 mb-6">
                 <div className="flex gap-1.5">
@@ -119,12 +127,23 @@ const Home = () => {
               </div>
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* Section 2: ATS Score */}
-        <section id="ats-score" className="vertex-section grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <motion.section 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          id="ats-score" 
+          className="vertex-section grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative"
+        >
+          {/* Intersection grid crosshairs */}
+          <div className="absolute -top-[5px] -left-[5px] text-muted-foreground/30 font-mono text-[10px] select-none pointer-events-none">+</div>
+          <div className="absolute -top-[5px] -right-[5px] text-muted-foreground/30 font-mono text-[10px] select-none pointer-events-none">+</div>
+
           <div className="lg:col-span-7 order-last lg:order-first">
-            <div className="border border-border/60 bg-card/60 backdrop-blur-sm rounded-2xl p-6 shadow-xl relative overflow-hidden">
+            <div className="border border-border/60 bg-card/60 backdrop-blur-sm rounded-2xl p-6 shadow-xl relative overflow-hidden transition-all duration-300 hover:scale-[1.01]">
               {/* Window chrome bar */}
               <div className="flex items-center justify-between pb-4 border-b border-border/40 mb-6">
                 <div className="flex gap-1.5">
@@ -205,10 +224,21 @@ const Home = () => {
               </Link>
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* Section 3: Cover Letter */}
-        <section id="cover-letter" className="vertex-section grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <motion.section 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          id="cover-letter" 
+          className="vertex-section grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative"
+        >
+          {/* Intersection grid crosshairs */}
+          <div className="absolute -top-[5px] -left-[5px] text-muted-foreground/30 font-mono text-[10px] select-none pointer-events-none">+</div>
+          <div className="absolute -top-[5px] -right-[5px] text-muted-foreground/30 font-mono text-[10px] select-none pointer-events-none">+</div>
+
           <div className="lg:col-span-5 space-y-6">
             <div className="vertex-badge">
               <Mail className="size-3.5 text-foreground/75" />
@@ -229,7 +259,7 @@ const Home = () => {
           </div>
 
           <div className="lg:col-span-7">
-            <div className="border border-border/60 bg-card/60 backdrop-blur-sm rounded-2xl p-6 shadow-xl relative overflow-hidden">
+            <div className="border border-border/60 bg-card/60 backdrop-blur-sm rounded-2xl p-6 shadow-xl relative overflow-hidden transition-all duration-300 hover:scale-[1.01]">
               {/* Window chrome bar */}
               <div className="flex items-center justify-between pb-4 border-b border-border/40 mb-6">
                 <div className="flex gap-1.5">
@@ -272,12 +302,23 @@ const Home = () => {
               </div>
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* Section 4: Industry Insights */}
-        <section id="industry-insights" className="vertex-section grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <motion.section 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          id="industry-insights" 
+          className="vertex-section grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative"
+        >
+          {/* Intersection grid crosshairs */}
+          <div className="absolute -top-[5px] -left-[5px] text-muted-foreground/30 font-mono text-[10px] select-none pointer-events-none">+</div>
+          <div className="absolute -top-[5px] -right-[5px] text-muted-foreground/30 font-mono text-[10px] select-none pointer-events-none">+</div>
+
           <div className="lg:col-span-7 order-last lg:order-first">
-            <div className="border border-border/60 bg-card/60 backdrop-blur-sm rounded-2xl p-6 shadow-xl relative overflow-hidden">
+            <div className="border border-border/60 bg-card/60 backdrop-blur-sm rounded-2xl p-6 shadow-xl relative overflow-hidden transition-all duration-300 hover:scale-[1.01]">
               {/* Window chrome bar */}
               <div className="flex items-center justify-between pb-4 border-b border-border/40 mb-6">
                 <div className="flex gap-1.5">
@@ -345,10 +386,21 @@ const Home = () => {
               </Link>
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* Section 5: Whiteboard / Tracker */}
-        <section id="visual-whiteboard" className="vertex-section grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <motion.section 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          id="visual-whiteboard" 
+          className="vertex-section grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative border-b-0"
+        >
+          {/* Intersection grid crosshairs */}
+          <div className="absolute -top-[5px] -left-[5px] text-muted-foreground/30 font-mono text-[10px] select-none pointer-events-none">+</div>
+          <div className="absolute -top-[5px] -right-[5px] text-muted-foreground/30 font-mono text-[10px] select-none pointer-events-none">+</div>
+
           <div className="lg:col-span-5 space-y-6">
             <div className="vertex-badge">
               <Palette className="size-3.5 text-foreground/75" />
@@ -369,7 +421,7 @@ const Home = () => {
           </div>
 
           <div className="lg:col-span-7">
-            <div className="border border-border/60 bg-card/60 backdrop-blur-sm rounded-2xl p-6 shadow-xl relative overflow-hidden">
+            <div className="border border-border/60 bg-card/60 backdrop-blur-sm rounded-2xl p-6 shadow-xl relative overflow-hidden transition-all duration-300 hover:scale-[1.01]">
               {/* Window chrome bar */}
               <div className="flex items-center justify-between pb-4 border-b border-border/40 mb-6">
                 <div className="flex gap-1.5">
@@ -420,7 +472,7 @@ const Home = () => {
               </div>
             </div>
           </div>
-        </section>
+        </motion.section>
 
       </div>
     </div>
