@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { resend } from "@/lib/resend";
 
 export const dynamic = 'force-dynamic';
 
@@ -14,6 +15,10 @@ export async function POST(request: Request) {
         { status: 401 }
       );
     }
+
+    const clerkUser = await currentUser();
+    const userEmail = clerkUser?.emailAddresses[0]?.emailAddress || "";
+    const fullName = `${clerkUser?.firstName || ""} ${clerkUser?.lastName || ""}`.trim() || "User";
 
     // 2. Parse request payload
     let payload;
@@ -166,6 +171,62 @@ Return ONLY the raw JSON object. Do not format with markdown blocks.
       const response = await model.generateContent(prompt);
       const textResponse = response.response.text();
       const insights = JSON.parse(textResponse.trim());
+
+      // Send email using Resend
+      try {
+        if (userEmail) {
+          const overview = insights.overview || {};
+          const marketSummary = insights.marketSummary || [];
+          const summaryListItems = marketSummary
+            .map((point: string) => `<li>${point}</li>`)
+            .join("");
+
+          await resend.emails.send({
+            from: "JobBoard <onboarding@resend.dev>",
+            to: [userEmail],
+            subject: `Industry Insights: ${role} in ${location}`,
+            html: `
+              <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+                <h2>Industry Insights Report</h2>
+                <p>Hi ${fullName},</p>
+                <p>Here is your localized market analysis and insights summary report for <strong>${role}</strong> in <strong>${location}</strong> (${experience}, ${employmentType}).</p>
+                
+                <div style="background-color: #f5f5f7; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                  <h3 style="margin-top: 0; color: #0070f3;">Market Overview</h3>
+                  <table style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                      <td style="padding: 6px 0; font-weight: bold; width: 40%;">Average Salary:</td>
+                      <td style="padding: 6px 0;">${overview.averageSalary || "N/A"} (${overview.salaryChange || "N/A"})</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 6px 0; font-weight: bold;">Active Jobs:</td>
+                      <td style="padding: 6px 0;">${overview.activeJobs || "N/A"}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 6px 0; font-weight: bold;">Hiring Trend:</td>
+                      <td style="padding: 6px 0;">${overview.hiringTrend || "N/A"} (${overview.hiringTrendSub || "N/A"})</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 6px 0; font-weight: bold;">Top Hiring Company:</td>
+                      <td style="padding: 6px 0;">${overview.topCompany || "N/A"}</td>
+                    </tr>
+                  </table>
+                </div>
+
+                ${summaryListItems ? `
+                  <h3>Key Market Takeaways</h3>
+                  <ul>${summaryListItems}</ul>
+                ` : ""}
+                
+                <hr style="border: 0; border-top: 1px solid #eaeaea; margin: 30px 0;" />
+                <p style="font-size: 12px; color: #888;">This report was generated using real-time AI market synthesis on your Job Board dashboard.</p>
+              </div>
+            `
+          });
+        }
+      } catch (emailError) {
+        console.error("Failed to send industry insights email:", emailError);
+      }
       
       return NextResponse.json(insights);
     } catch (apiError: unknown) {

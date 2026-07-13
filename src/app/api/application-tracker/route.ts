@@ -10,6 +10,7 @@ import {
   coverLettersTable 
 } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
+import { resend } from "@/lib/resend";
 
 export const dynamic = 'force-dynamic';
 
@@ -274,9 +275,43 @@ export async function PATCH(request: Request) {
 
     const updateFields: Record<string, unknown> = {};
     if (status !== undefined) {
-      updateFields.status = status;
-      if (status === "Applied" && !targetApp.appliedAt) {
-        updateFields.appliedAt = new Date();
+      if (status !== targetApp.status) {
+        updateFields.status = status;
+        if (status === "Applied" && !targetApp.appliedAt) {
+          updateFields.appliedAt = new Date();
+        }
+
+        // Send email notification on status change
+        try {
+          const [job] = await db
+            .select()
+            .from(jobsTable)
+            .where(eq(jobsTable.id, targetApp.jobId))
+            .limit(1);
+
+          const companyName = job?.company || "Unknown Company";
+          const jobTitleName = job?.title || "Unknown Position";
+
+          if (dbUser.email) {
+            await resend.emails.send({
+              from: "JobBoard <onboarding@resend.dev>",
+              to: [dbUser.email],
+              subject: `Job Application Status Update: ${companyName}`,
+              html: `
+                <p>Hi ${dbUser.fullName},</p>
+                <p>The status of your application for <strong>${jobTitleName}</strong> at <strong>${companyName}</strong> has been updated.</p>
+                <p><strong>Previous Status:</strong> ${targetApp.status}</p>
+                <p><strong>New Status:</strong> ${status}</p>
+                <br/>
+                <p>Keep tracking your progress on the dashboard!</p>
+                <hr/>
+                <p>Best regards,<br/>Job Board Team</p>
+              `
+            });
+          }
+        } catch (emailError) {
+          console.error("Failed to send status update email:", emailError);
+        }
       }
     }
     if (notes !== undefined) updateFields.notes = notes;
