@@ -26,11 +26,12 @@ const Navbar = () => {
 
           {/* Center Nav Links */}
           <nav className="hidden md:flex items-center gap-1">
-            <Link href="/jobs" className="vertex-nav-link">Jobs</Link>
-            <Link href="/ats-score" className="vertex-nav-link">ATS Score</Link>
-            <Link href="/cover-letter" className="vertex-nav-link">Cover Letter</Link>
-            <Link href="/industry-insights" className="vertex-nav-link">Insights</Link>
-            <Link href="/visual-whiteboard" className="vertex-nav-link">Tracker</Link>
+            <Link href="#" className="vertex-nav-link">Home</Link>
+            <Link href="#jobs" className="vertex-nav-link">Jobs</Link>
+            <Link href="#ats-score" className="vertex-nav-link">ATS Score</Link>
+            <Link href="#cover-letter" className="vertex-nav-link">Cover Letter</Link>
+            <Link href="#industry-insights" className="vertex-nav-link">Insights</Link>
+            <Link href="#visual-whiteboard" className="vertex-nav-link">Tracker</Link>
           </nav>
 
           {/* Right Actions */}
