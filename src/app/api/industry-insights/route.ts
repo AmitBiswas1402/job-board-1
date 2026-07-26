@@ -145,14 +145,26 @@ Return a JSON object conforming exactly to this structure:
   "latestNews": [
     {
       "thumbnail": "High-quality topic-relevant unsplash image URL",
-      "headline": "Trending headline relating to this role's ecosystem",
-      "source": "E.g. TechCrunch, VentureBeat, InfoQ",
-      "time": "Relative timeline e.g. 2 days ago",
-      "url": "Relevant website URL"
+      "headline": "Trending headline about this tech (specifically from sources like web.dev, TechCrunch, InfoQ, Vercel Blog, CSS-Tricks, or MDN)",
+      "source": "Name of source e.g. web.dev, TechCrunch, Vercel Blog",
+      "time": "Relative timeline e.g. 2 hours ago",
+      "url": "Relevant article URL"
     },
-    { "thumbnail": "Unsplash URL", "headline": "Headline", "source": "Source", "time": "Time", "url": "URL" },
-    { "thumbnail": "Unsplash URL", "headline": "Headline", "source": "Source", "time": "Time", "url": "URL" },
-    { "thumbnail": "Unsplash URL", "headline": "Headline", "source": "Source", "time": "Time", "url": "URL" }
+    { "thumbnail": "Unsplash URL", "headline": "Tech news headline", "source": "web.dev", "time": "1 day ago", "url": "https://web.dev" },
+    { "thumbnail": "Unsplash URL", "headline": "Tech news headline", "source": "TechCrunch", "time": "3 hours ago", "url": "https://techcrunch.com" },
+    { "thumbnail": "Unsplash URL", "headline": "Tech news headline", "source": "InfoQ", "time": "2 days ago", "url": "https://infoq.com" }
+  ],
+  "trendingTweets": [
+    {
+      "author": "High-profile Tech Influencer/Dev name (e.g. Dan Abramov, Lee Robinson, Wes Bos, Addy Osmani)",
+      "handle": "@twitterhandle",
+      "content": "Highly realistic tech tweet/post text sharing insights or hot takes about this technology",
+      "likes": "Realistic likes count (e.g. 1.2k)",
+      "retweets": "Realistic retweets count (e.g. 182)",
+      "time": "e.g. 4h ago"
+    },
+    { "author": "Tech Dev", "handle": "@devhandle", "content": "Another tweet content", "likes": "942", "retweets": "87", "time": "6h ago" },
+    { "author": "Framework Author", "handle": "@authorhandle", "content": "Third tweet content", "likes": "2.4k", "retweets": "340", "time": "12h ago" }
   ],
   "marketSummary": [
     "Market summary point 1 based on role and location",

@@ -85,37 +85,27 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  --background: #131313;
+  --foreground: #e5e2e1;
+  --card: #121212;
+  --card-foreground: #e5e2e1;
+  --popover: #121212;
+  --popover-foreground: #e5e2e1;
+  --primary: #ffffff;
+  --primary-foreground: #000000;
+  --secondary: #89ceff;
+  --secondary-foreground: #00344d;
+  --muted: #2a2a2a;
+  --muted-foreground: #94A3B8;
+  --accent: #2a2a2a;
+  --accent-foreground: #e5e2e1;
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --border: #334155;
+  --input: #334155;
+  --ring: #89ceff;
+  --sidebar: #121212;
+  --sidebar-foreground: #e5e2e1;
+  --sidebar-border: #334155;
 }
 
 @layer base {
@@ -130,67 +120,73 @@
   }
 }
 
-/* Vertex Design System Utilities */
+/* Pitch Blueprint Design System Utilities (Redefined) */
 @layer components {
-  /* Structural border-grid container (Vertex signature) */
+  /* 12-column structural container with dashed borders in #334155 */
   .vertex-container {
-    @apply border-x border-dashed border-border max-w-6xl mx-auto;
+    @apply max-w-6xl mx-auto border-x border-dashed border-[#334155];
   }
 
-  /* Section divider with dashed border */
+  /* Grid layout sections divided by 1px dashed borders */
   .vertex-section {
-    @apply border-b border-dashed border-border py-16 md:py-24 px-6 md:px-12;
+    @apply py-16 md:py-20 border-b border-dashed border-[#334155] px-6 md:px-12 relative bg-black;
   }
 
-  /* Card pattern matching Vertex's elevated surfaces */
+  /* Tonal surface card (#121212) with 12px rounded corners and dashed border */
   .vertex-card {
-    @apply bg-card border rounded-2xl shadow-sm transition-shadow duration-300 hover:shadow-lg;
+    @apply bg-[#121212] border border-dashed border-[#334155] rounded-xl transition-all duration-300;
   }
 
-  /* Pill badge (AI-native badge style) */
+  /* Featured card with solid Sky Blue accent border */
+  .vertex-card-featured {
+    @apply bg-[#121212] border border-solid border-[#89ceff] rounded-xl transition-all duration-300;
+  }
+
+  /* Tag chips: rounded 4px, JetBrains Mono font, dark gray bg, data-muted text, no borders */
   .vertex-badge {
-    @apply inline-flex items-center gap-2 bg-card border rounded-full px-3 py-1 text-xs font-medium text-muted-foreground;
+    @apply inline-flex items-center gap-1.5 bg-[#1E293B] rounded-sm px-2.5 py-1 text-xs font-medium text-[#94A3B8] font-mono tracking-wider uppercase border-0;
   }
 
-  /* Premium CTA button with Vertex drop shadow */
+  /* Primary Button: Solid white with black text, no border, rounded-md (8px) */
   .vertex-cta {
-    @apply bg-primary text-primary-foreground shadow-md shadow-black/15 hover:bg-primary/90 active:scale-[0.98] transition-all duration-150;
+    @apply bg-white hover:bg-white/95 text-black hover:shadow-[0_0_12px_rgba(255,255,255,0.25)] rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-200 border-0 flex items-center justify-center;
   }
 
-  /* Outlined secondary button */
+  /* Secondary Button: Transparent background, 1px solid white border, text white */
   .vertex-outline {
-    @apply border bg-background hover:bg-accent active:scale-[0.98] transition-all duration-150;
+    @apply border border-white hover:border-white/90 bg-transparent text-white hover:bg-white/5 hover:scale-[1.03] rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-200 flex items-center justify-center;
   }
 
-  /* Nav link hover effect */
+  /* Nav link style: Space Grotesk headings font */
   .vertex-nav-link {
-    @apply text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-foreground/5 rounded-md px-3 py-2 transition-colors duration-200;
+    @apply text-sm font-semibold text-[#94A3B8] hover:text-white rounded-md px-3 py-2 transition-colors duration-200 font-heading tracking-wide;
   }
 
-  /* Input field styling */
+  /* Input fields: Pure black background, 1px solid #334155 border, focused active border white */
   .vertex-input {
-    @apply w-full bg-background border rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-ring transition-all;
+    @apply w-full bg-black border border-[#334155] rounded-lg px-4 py-2.5 text-sm text-[#e5e2e1] placeholder:text-neutral-600 focus:outline-none focus:border-white transition-all;
   }
 
-  /* Section heading */
+  /* Section heading with Space Grotesk tracking-wide */
   .vertex-heading {
-    @apply text-4xl font-semibold tracking-tight text-balance text-foreground;
+    @apply text-3xl md:text-4xl font-bold tracking-tight text-[#e5e2e1] font-heading;
+    letter-spacing: -0.02em;
   }
 
-  /* Subheading / description text */
+  /* Subtext description using Inter body font */
   .vertex-subtext {
-    @apply text-muted-foreground text-balance leading-relaxed;
+    @apply text-[#94A3B8] text-balance leading-relaxed text-sm md:text-base font-sans;
   }
 }
 
-/* Smooth animations */
+/* Animations */
 @keyframes vertex-fade-in {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes vertex-slide-up {
-  from { opacity: 0; transform: translateY(16px); }
+  from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -198,15 +194,19 @@
   animation: vertex-fade-in 0.5s ease-out both;
 }
 
+.animate-vertex-fade-in {
+  animation: vertex-fade-in 0.4s ease-out both;
+}
+
 .animate-vertex-slide-up {
-  animation: vertex-slide-up 0.6s ease-out both;
+  animation: vertex-slide-up 0.5s ease-out both;
 }
 
 .animate-vertex-slide-up-delay {
-  animation: vertex-slide-up 0.6s ease-out 0.15s both;
+  animation: vertex-slide-up 0.5s ease-out 0.12s both;
 }
 
-/* Blue edge container glow (Vertex signature) */
+/* Edge Glow Gradient Lines (Sky Blue & Indigo) */
 .vertex-edge-glow {
   position: relative;
 }
@@ -218,7 +218,7 @@
   left: -1px;
   width: 1px;
   height: 100%;
-  background: linear-gradient(180deg, transparent 0%, rgba(56, 189, 248, 0.4) 30%, rgba(59, 130, 246, 0.4) 70%, transparent 100%);
+  background: linear-gradient(180deg, transparent 0%, rgba(14, 165, 233, 0.25) 30%, rgba(99, 102, 241, 0.25) 70%, transparent 100%);
   pointer-events: none;
   z-index: 10;
 }
@@ -230,7 +230,7 @@
   right: -1px;
   width: 1px;
   height: 100%;
-  background: linear-gradient(180deg, transparent 0%, rgba(56, 189, 248, 0.4) 30%, rgba(59, 130, 246, 0.4) 70%, transparent 100%);
+  background: linear-gradient(180deg, transparent 0%, rgba(14, 165, 233, 0.25) 30%, rgba(99, 102, 241, 0.25) 70%, transparent 100%);
   pointer-events: none;
   z-index: 10;
 }

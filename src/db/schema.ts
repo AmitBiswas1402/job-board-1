@@ -106,3 +106,15 @@ export const atsReportsTable = pgTable("ats_reports", {
   suggestions: text(),
   createdAt: timestamp().defaultNow().notNull(),
 });
+
+// ==================== STATUS HISTORY ====================
+
+export const statusHistoryTable = pgTable("application_status_history", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  applicationId: integer().notNull(),
+  fromStatus: varchar({ length: 50 }),
+  toStatus: varchar({ length: 50 }).notNull(),
+  changedAt: timestamp().defaultNow().notNull(),
+  notes: text(),
+});
+

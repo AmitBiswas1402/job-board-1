@@ -20,7 +20,8 @@ import {
   GitCommit,
   Columns,
   Trash2,
-  Globe
+  Globe,
+  Mail
 } from "lucide-react";
 import { jsPDF } from "jspdf";
 import {
@@ -70,6 +71,15 @@ interface AtsReportData {
   suggestions: string | null;
 }
 
+interface StatusHistoryItem {
+  id: number;
+  applicationId: number;
+  fromStatus: string | null;
+  toStatus: string;
+  changedAt: string;
+  notes?: string | null;
+}
+
 interface Application {
   id: number;
   status: string; // Saved, Applied, Assessment, Interview, HR, Offer, Rejected
@@ -82,6 +92,7 @@ interface Application {
   resume: ResumeData | null;
   coverLetter: CoverLetterData | null;
   atsReport: AtsReportData | null;
+  statusHistory?: StatusHistoryItem[];
 }
 
 // Kanban stages
@@ -132,6 +143,34 @@ export default function VisualWhiteboardPage() {
   const [showMoreDesc, setShowMoreDesc] = useState(false);
   const [atsExpanded, setAtsExpanded] = useState(false);
   const [letterPreviewOpen, setLetterPreviewOpen] = useState(false);
+
+  const [sendingEmail, setSendingEmail] = useState(false);
+  const [emailStatus, setEmailStatus] = useState<"idle" | "sent" | "error">("idle");
+
+  const handleSendApplicationEmail = async (appId: number) => {
+    try {
+      setSendingEmail(true);
+      setEmailStatus("idle");
+      const res = await fetch("/api/application-tracker", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          applicationId: appId,
+          sendEmail: true,
+        }),
+      });
+      if (!res.ok) {
+        throw new Error("Failed to send email notification.");
+      }
+      setEmailStatus("sent");
+      setTimeout(() => setEmailStatus("idle"), 4000);
+    } catch (err) {
+      console.error(err);
+      setEmailStatus("error");
+    } finally {
+      setSendingEmail(false);
+    }
+  };
 
   // Fetch applications on load
   const fetchApplications = async () => {
@@ -1033,45 +1072,67 @@ export default function VisualWhiteboardPage() {
                 </div>
               </div>
 
-              {/* Section 7: Timeline */}
+              {/* Section 7: Timeline & Status History Log */}
               <div className="space-y-3 border-t pt-6">
-                <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Timeline</h4>
-                <div className="vertex-card p-4 space-y-4">
-                  <div className="flex items-start gap-3">
-                    <div className="size-6 rounded-full bg-muted border flex items-center justify-center text-[10px] font-semibold shrink-0 mt-0.5">1</div>
-                    <div>
-                      <p className="text-xs font-semibold text-foreground">Job Saved</p>
-                      <p className="text-[10px] text-muted-foreground mt-0.5">
-                        {new Date(selectedApp.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                      </p>
-                    </div>
-                  </div>
+                <div className="flex justify-between items-center">
+                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Timeline & Status History</h4>
+                  <span className="text-[10px] text-muted-foreground font-medium">
+                    {selectedApp.statusHistory?.length || 0} transitions recorded
+                  </span>
+                </div>
 
-                  {/* If status is beyond Saved, show Applied milestone */}
-                  {["Applied", "Assessment", "Interview", "HR", "Offer", "Rejected"].includes(selectedApp.status) && (
-                    <div className="flex items-start gap-3 border-t pt-3.5">
-                      <div className="size-6 rounded-full bg-muted border flex items-center justify-center text-[10px] font-semibold shrink-0 mt-0.5">2</div>
-                      <div>
-                        <p className="text-xs font-semibold text-foreground">Applied</p>
-                        <p className="text-[10px] text-muted-foreground mt-0.5">
-                          {selectedApp.appliedAt 
-                            ? new Date(selectedApp.appliedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
-                            : "Pending date sync"}
-                        </p>
-                      </div>
+                <div className="vertex-card p-4 space-y-3">
+                  {selectedApp.statusHistory && selectedApp.statusHistory.length > 0 ? (
+                    <div className="space-y-3">
+                      {selectedApp.statusHistory.map((item, idx) => (
+                        <div key={item.id || idx} className={`flex items-start justify-between gap-3 text-xs ${idx > 0 ? "border-t pt-3" : ""}`}>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="size-5 rounded-full bg-muted border flex items-center justify-center text-[10px] font-semibold text-muted-foreground shrink-0">
+                              {idx + 1}
+                            </span>
+                            {item.fromStatus ? (
+                              <div className="flex items-center gap-1.5 text-xs font-medium">
+                                <span className="text-muted-foreground">{item.fromStatus}</span>
+                                <span className="text-muted-foreground/60">→</span>
+                                <span className="font-semibold text-foreground">{item.toStatus}</span>
+                              </div>
+                            ) : (
+                              <span className="font-semibold text-foreground">Initial Stage: {item.toStatus}</span>
+                            )}
+                          </div>
+                          <span className="text-[10px] text-muted-foreground whitespace-nowrap font-medium">
+                            {new Date(item.changedAt).toLocaleString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                              hour: "numeric",
+                              minute: "2-digit"
+                            })}
+                          </span>
+                        </div>
+                      ))}
                     </div>
-                  )}
-
-                  {/* If status is Assessment, Interview, HR, Offer, or Rejected, show latest progress */}
-                  {["Assessment", "Interview", "HR", "Offer", "Rejected"].includes(selectedApp.status) && (
-                    <div className="flex items-start gap-3 border-t pt-3.5">
-                      <div className="size-6 rounded-full bg-muted border flex items-center justify-center text-[10px] font-semibold shrink-0 mt-0.5">3</div>
-                      <div>
-                        <p className="text-xs font-semibold text-foreground">Active Stage: {selectedApp.status}</p>
-                        <p className="text-[10px] text-muted-foreground mt-0.5">
-                          Updated {new Date(selectedApp.updatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                        </p>
+                  ) : (
+                    <div className="space-y-3">
+                      <div className="flex items-start gap-3">
+                        <div className="size-5 rounded-full bg-muted border flex items-center justify-center text-[10px] font-semibold shrink-0 mt-0.5">1</div>
+                        <div>
+                          <p className="text-xs font-semibold text-foreground">Job Saved</p>
+                          <p className="text-[10px] text-muted-foreground mt-0.5">
+                            {new Date(selectedApp.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                          </p>
+                        </div>
                       </div>
+                      {["Applied", "Assessment", "Interview", "HR", "Offer", "Rejected"].includes(selectedApp.status) && (
+                        <div className="flex items-start gap-3 border-t pt-3">
+                          <div className="size-5 rounded-full bg-muted border flex items-center justify-center text-[10px] font-semibold shrink-0 mt-0.5">2</div>
+                          <div>
+                            <p className="text-xs font-semibold text-foreground">Stage: {selectedApp.status}</p>
+                            <p className="text-[10px] text-muted-foreground mt-0.5">
+                              Updated {new Date(selectedApp.updatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                            </p>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -1142,6 +1203,15 @@ export default function VisualWhiteboardPage() {
                       </div>
                     </div>
                   </div>
+
+                  <button
+                    disabled={sendingEmail}
+                    onClick={() => handleSendApplicationEmail(selectedApp.id)}
+                    className="col-span-2 vertex-outline inline-flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-semibold transition-all hover:bg-muted"
+                  >
+                    <Mail className="size-4 text-blue-500" />
+                    {sendingEmail ? "Sending Email..." : emailStatus === "sent" ? "✓ Application Email Sent!" : emailStatus === "error" ? "Failed to send email" : "Email Details to Me"}
+                  </button>
 
                   <button
                     disabled={isArchiving}

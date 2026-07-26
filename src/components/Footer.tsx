@@ -93,7 +93,7 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="w-full bg-[#000000] border-t border-dashed border-border py-16 px-6 md:px-12 mt-16 font-sans">
+    <footer className="w-full bg-black border-t border-dashed border-[#334155] py-16 px-6 md:px-12 mt-16 font-sans">
       <div className="max-w-7xl mx-auto flex flex-col gap-12">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-10">
           {/* Brand Column */}
