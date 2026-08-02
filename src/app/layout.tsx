@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { shadcn } from "@clerk/ui/themes";
-import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/Themes";
 import Footer from "@/components/Footer";
 
@@ -11,9 +11,10 @@ const inter = Inter({
   variable: "--font-sans",
 });
 
-const space = Space_Grotesk({
+const display = Inter({
   subsets: ["latin"],
-  variable: "--font-heading",
+  variable: "--font-display",
+  weight: ["600"],
 });
 
 const mono = JetBrains_Mono({
@@ -34,15 +35,15 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${space.variable} ${mono.variable} h-full antialiased`}
+      className={`${inter.variable} ${display.variable} ${mono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <ClerkProvider appearance={{ theme: shadcn }}>
           <ThemeProvider
             attribute="class"
-            defaultTheme="system"
-            enableSystem
+            defaultTheme="light"
+            enableSystem={false}
             disableTransitionOnChange
           >
             {children}

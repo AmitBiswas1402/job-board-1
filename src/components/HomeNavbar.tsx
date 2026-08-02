@@ -11,40 +11,56 @@ const Navbar = () => {
   const { theme, setTheme } = useTheme();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-dashed border-[#334155] bg-[#131313]/95 backdrop-blur-md">
-      <div className="vertex-container">
-        <div className="flex items-center justify-between h-16">
+    <header className="cal-top-nav sticky top-0 z-50 w-full">
+      <div className="cal-container">
+        <div className="flex items-center justify-between h-full">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 shrink-0">
-            <svg className="size-5 text-[#e5e2e1]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg className="size-5 text-ink" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 2L2 7l10 5 10-5-10-5z" />
               <path d="M2 17l10 5 10-5" />
               <path d="M2 12l10 5 10-5" />
             </svg>
-            <span className="font-bold text-[#e5e2e1] tracking-tight font-heading">AI Job Board</span>
+            <span className="font-semibold text-ink tracking-tight cal-title-md">AI Job Board</span>
           </Link>
 
           {/* Center Nav Links */}
           <nav className="hidden md:flex items-center gap-1">
-            <Link href="#" className="text-sm font-semibold text-[#94A3B8] hover:text-white rounded-md px-3 py-2 transition-colors duration-200 font-heading tracking-wide">Home</Link>
-            <Link href="#jobs" className="text-sm font-semibold text-[#94A3B8] hover:text-white rounded-md px-3 py-2 transition-colors duration-200 font-heading tracking-wide">Jobs</Link>
-            <Link href="#ats-score" className="text-sm font-semibold text-[#94A3B8] hover:text-white rounded-md px-3 py-2 transition-colors duration-200 font-heading tracking-wide">ATS Score</Link>
-            <Link href="#cover-letter" className="text-sm font-semibold text-[#94A3B8] hover:text-white rounded-md px-3 py-2 transition-colors duration-200 font-heading tracking-wide">Cover Letter</Link>
-            <Link href="#industry-insights" className="text-sm font-semibold text-[#94A3B8] hover:text-white rounded-md px-3 py-2 transition-colors duration-200 font-heading tracking-wide">Insights</Link>
-            <Link href="#visual-whiteboard" className="text-sm font-semibold text-[#94A3B8] hover:text-white rounded-md px-3 py-2 transition-colors duration-200 font-heading tracking-wide">Tracker</Link>
+            <Link href="/jobs" className="cal-nav-link">Jobs</Link>
+            <Link href="/ats-score" className="cal-nav-link">ATS Score</Link>
+            <Link href="/cover-letter" className="cal-nav-link">Cover Letter</Link>
+            <Link href="/industry-insights" className="cal-nav-link">Insights</Link>
+            <Link href="/visual-whiteboard" className="cal-nav-link">Tracker</Link>
           </nav>
 
           {/* Right Actions */}
           <div className="flex items-center gap-3">
+            {/* Theme Toggle */}
+            <button
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="size-8 flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-foreground/5 transition-colors"
+              aria-label="Toggle theme"
+            >
+              <Sun className="size-4 hidden dark:block" />
+              <Moon className="size-4 block dark:hidden" />
+            </button>
+
             {!user ? (
-              <SignInButton mode="modal" forceRedirectUrl="/dashboard">
-                <Button className="bg-white hover:bg-white/95 text-black hover:shadow-[0_0_12px_rgba(255,255,255,0.25)] rounded-lg text-sm font-semibold px-5 h-10 transition-all duration-200 border-0 flex items-center justify-center">
-                  Get Started
-                </Button>
-              </SignInButton>
+              <>
+                <SignInButton mode="modal" forceRedirectUrl="/dashboard">
+                  <Button className="cal-button-text-link hidden sm:inline-flex">
+                    Sign in
+                  </Button>
+                </SignInButton>
+                <SignInButton mode="modal" forceRedirectUrl="/dashboard">
+                  <Button className="cal-button-primary">
+                    Sign up free
+                  </Button>
+                </SignInButton>
+              </>
             ) : (
               <div className="flex items-center gap-3">
-                <Link href="/dashboard" className="text-sm font-semibold text-[#94A3B8] hover:text-white rounded-md px-3 py-2 transition-colors duration-200 font-heading tracking-wide hidden sm:block">
+                <Link href="/dashboard" className="cal-nav-link hidden sm:inline-flex">
                   Dashboard
                 </Link>
                 <UserButton />

@@ -8,9 +8,52 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-ink: var(--ink);
+  --color-body: var(--body);
+  --color-muted: var(--muted);
+  --color-muted-soft: var(--muted-soft);
+  --color-hairline: var(--hairline);
+  --color-hairline-soft: var(--hairline-soft);
+  --color-canvas: var(--canvas);
+  --color-surface-soft: var(--surface-soft);
+  --color-surface-card: var(--surface-card);
+  --color-surface-strong: var(--surface-strong);
+  --color-surface-dark: var(--surface-dark);
+  --color-surface-dark-elevated: var(--surface-dark-elevated);
+  --color-on-primary: var(--on-primary);
+  --color-on-dark: var(--on-dark);
+  --color-on-dark-soft: var(--on-dark-soft);
+  --color-brand-accent: var(--brand-accent);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --color-primary-active: var(--primary-active);
+  --color-primary-disabled: var(--primary-disabled);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-badge-orange: var(--badge-orange);
+  --color-badge-pink: var(--badge-pink);
+  --color-badge-violet: var(--badge-violet);
+  --color-badge-emerald: var(--badge-emerald);
   --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-display: var(--font-display);
+  --font-heading: var(--font-display);
+  --font-mono: var(--font-mono);
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-pill: 9999px;
+  --radius-full: 9999px;
+  --spacing-xxs: 4px;
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
+  --spacing-section: 96px;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -31,7 +74,6 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary: var(--secondary);
   --color-primary-foreground: var(--primary-foreground);
@@ -40,72 +82,124 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --background: #ffffff;
+  --foreground: #111111;
+  --ink: #111111;
+  --body: #374151;
+  --muted: #6b7280;
+  --muted-soft: #898989;
+  --muted-foreground: #6b7280;
+  --hairline: #e5e7eb;
+  --hairline-soft: #f3f4f6;
+  --canvas: #ffffff;
+  --surface-soft: #f8f9fa;
+  --surface-card: #f5f5f5;
+  --surface-strong: #e5e7eb;
+  --surface-dark: #101010;
+  --surface-dark-elevated: #1a1a1a;
+  --on-primary: #ffffff;
+  --on-dark: #ffffff;
+  --on-dark-soft: #a1a1aa;
+  --brand-accent: #3b82f6;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --badge-orange: #fb923c;
+  --badge-pink: #ec4899;
+  --badge-violet: #8b5cf6;
+  --badge-emerald: #34d399;
+  --primary: #111111;
+  --primary-foreground: #ffffff;
+  --primary-active: #242424;
+  --primary-disabled: #d4d4d4;
+  --secondary: #f8f9fa;
+  --secondary-foreground: #111111;
+  --accent: #f8f9fa;
+  --accent-foreground: #111111;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #e5e7eb;
+  --input: #e5e7eb;
+  --ring: #111111;
+  --card: #f5f5f5;
+  --card-foreground: #111111;
+  --popover: #ffffff;
+  --popover-foreground: #111111;
+  --chart-1: #111111;
+  --chart-2: #6b7280;
+  --chart-3: #374151;
+  --chart-4: #10b981;
+  --chart-5: #3b82f6;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #111111;
+  --sidebar-primary: #111111;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f8f9fa;
+  --sidebar-accent-foreground: #111111;
+  --sidebar-border: #e5e7eb;
+  --sidebar-ring: #111111;
 }
 
 .dark {
-  --background: #131313;
-  --foreground: #e5e2e1;
-  --card: #121212;
-  --card-foreground: #e5e2e1;
-  --popover: #121212;
-  --popover-foreground: #e5e2e1;
+  --background: #101010;
+  --foreground: #ffffff;
+  --ink: #ffffff;
+  --body: #a1a1aa;
+  --muted: #6b7280;
+  --muted-soft: #898989;
+  --muted-foreground: #a1a1aa;
+  --hairline: #1a1a1a;
+  --hairline-soft: #1a1a1a;
+  --canvas: #101010;
+  --surface-soft: #1a1a1a;
+  --surface-card: #1a1a1a;
+  --surface-strong: #242424;
+  --surface-dark: #101010;
+  --surface-dark-elevated: #1a1a1a;
+  --on-primary: #111111;
+  --on-dark: #ffffff;
+  --on-dark-soft: #a1a1aa;
+  --brand-accent: #3b82f6;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --badge-orange: #fb923c;
+  --badge-pink: #ec4899;
+  --badge-violet: #8b5cf6;
+  --badge-emerald: #34d399;
   --primary: #ffffff;
-  --primary-foreground: #000000;
-  --secondary: #89ceff;
-  --secondary-foreground: #00344d;
-  --muted: #2a2a2a;
-  --muted-foreground: #94A3B8;
-  --accent: #2a2a2a;
-  --accent-foreground: #e5e2e1;
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: #334155;
-  --input: #334155;
-  --ring: #89ceff;
-  --sidebar: #121212;
-  --sidebar-foreground: #e5e2e1;
-  --sidebar-border: #334155;
+  --primary-foreground: #111111;
+  --primary-active: #d4d4d4;
+  --primary-disabled: #242424;
+  --secondary: #242424;
+  --secondary-foreground: #ffffff;
+  --accent: #242424;
+  --accent-foreground: #ffffff;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #1a1a1a;
+  --input: #1a1a1a;
+  --ring: #ffffff;
+  --card: #1a1a1a;
+  --card-foreground: #ffffff;
+  --popover: #1a1a1a;
+  --popover-foreground: #ffffff;
+  --chart-1: #ffffff;
+  --chart-2: #a1a1aa;
+  --chart-3: #6b7280;
+  --chart-4: #10b981;
+  --chart-5: #3b82f6;
+  --sidebar: #101010;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #ffffff;
+  --sidebar-primary-foreground: #111111;
+  --sidebar-accent: #242424;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #1a1a1a;
+  --sidebar-ring: #ffffff;
 }
 
 @layer base {
@@ -120,117 +214,374 @@
   }
 }
 
-/* Pitch Blueprint Design System Utilities (Redefined) */
+/* Cal.com Design System Utilities */
 @layer components {
-  /* 12-column structural container with dashed borders in #334155 */
-  .vertex-container {
-    @apply max-w-6xl mx-auto border-x border-dashed border-[#334155];
+  .cal-container {
+    @apply max-w-[1200px] mx-auto px-6;
   }
 
-  /* Grid layout sections divided by 1px dashed borders */
-  .vertex-section {
-    @apply py-16 md:py-20 border-b border-dashed border-[#334155] px-6 md:px-12 relative bg-black;
+  .cal-section {
+    @apply py-[96px] bg-canvas;
   }
 
-  /* Tonal surface card (#121212) with 12px rounded corners and dashed border */
-  .vertex-card {
-    @apply bg-[#121212] border border-dashed border-[#334155] rounded-xl transition-all duration-300;
+  .cal-section-alt {
+    @apply py-[96px] bg-surface-soft;
   }
 
-  /* Featured card with solid Sky Blue accent border */
-  .vertex-card-featured {
-    @apply bg-[#121212] border border-solid border-[#89ceff] rounded-xl transition-all duration-300;
+  .cal-card {
+    @apply bg-surface-card text-ink rounded-lg p-8;
   }
 
-  /* Tag chips: rounded 4px, JetBrains Mono font, dark gray bg, data-muted text, no borders */
-  .vertex-badge {
-    @apply inline-flex items-center gap-1.5 bg-[#1E293B] rounded-sm px-2.5 py-1 text-xs font-medium text-[#94A3B8] font-mono tracking-wider uppercase border-0;
+  .cal-card-featured {
+    @apply bg-surface-dark text-white rounded-lg p-8;
   }
 
-  /* Primary Button: Solid white with black text, no border, rounded-md (8px) */
-  .vertex-cta {
-    @apply bg-white hover:bg-white/95 text-black hover:shadow-[0_0_12px_rgba(255,255,255,0.25)] rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-200 border-0 flex items-center justify-center;
+  .cal-card-outline {
+    @apply bg-canvas border border-hairline rounded-lg p-6;
   }
 
-  /* Secondary Button: Transparent background, 1px solid white border, text white */
-  .vertex-outline {
-    @apply border border-white hover:border-white/90 bg-transparent text-white hover:bg-white/5 hover:scale-[1.03] rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-200 flex items-center justify-center;
+  .cal-mockup-card {
+    @apply bg-canvas border border-hairline rounded-xl p-6 shadow-[0_1px_2px_rgba(0,0,0,0.05),0_4px_12px_rgba(0,0,0,0.08)];
   }
 
-  /* Nav link style: Space Grotesk headings font */
-  .vertex-nav-link {
-    @apply text-sm font-semibold text-[#94A3B8] hover:text-white rounded-md px-3 py-2 transition-colors duration-200 font-heading tracking-wide;
+  .cal-badge {
+    @apply inline-flex items-center gap-1.5 bg-surface-card rounded-full px-3 py-1 text-[13px] font-medium text-ink;
   }
 
-  /* Input fields: Pure black background, 1px solid #334155 border, focused active border white */
-  .vertex-input {
-    @apply w-full bg-black border border-[#334155] rounded-lg px-4 py-2.5 text-sm text-[#e5e2e1] placeholder:text-neutral-600 focus:outline-none focus:border-white transition-all;
+  .cal-nav-link {
+    @apply text-sm font-medium text-muted rounded-md px-3 py-2 transition-colors duration-200;
   }
 
-  /* Section heading with Space Grotesk tracking-wide */
-  .vertex-heading {
-    @apply text-3xl md:text-4xl font-bold tracking-tight text-[#e5e2e1] font-heading;
-    letter-spacing: -0.02em;
+  .cal-nav-link-active {
+    @apply text-ink bg-canvas shadow-sm;
   }
 
-  /* Subtext description using Inter body font */
-  .vertex-subtext {
-    @apply text-[#94A3B8] text-balance leading-relaxed text-sm md:text-base font-sans;
+  .cal-display-xl {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+  }
+
+  .cal-display-lg {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 4vw, 3rem);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+  }
+
+  .cal-display-md {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+  }
+
+  .cal-display-sm {
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+  }
+
+  .cal-title-lg {
+    font-family: var(--font-sans);
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+  }
+
+  .cal-title-md {
+    font-family: var(--font-sans);
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .cal-title-sm {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .cal-body {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--body);
+  }
+
+  .cal-body-sm {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--body);
+  }
+
+  .cal-caption {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  .cal-button-primary {
+    @apply bg-primary text-on-primary font-sans text-sm font-semibold h-10 px-5 rounded-md transition-colors duration-150;
+  }
+
+  .cal-button-primary:active {
+    background-color: var(--primary-active);
+  }
+
+  .cal-button-secondary {
+    @apply bg-canvas text-ink font-sans text-sm font-semibold h-10 px-5 rounded-md border border-hairline transition-colors duration-150;
+  }
+
+  .cal-button-secondary:hover {
+    @apply bg-surface-soft;
+  }
+
+  .cal-button-text-link {
+    @apply bg-transparent text-ink font-sans text-sm font-semibold transition-colors duration-150;
+  }
+
+  .cal-button-text-link:hover {
+    @apply text-muted;
+  }
+
+  .cal-text-link {
+    @apply bg-transparent text-ink font-sans text-base font-normal underline-offset-2 hover:underline transition-colors duration-150;
+  }
+
+  .cal-text-link:hover {
+    @apply text-muted;
+  }
+
+  .cal-nav-pill-group {
+    @apply bg-surface-soft p-1 rounded-full inline-flex gap-1;
+  }
+
+  .cal-nav-pill {
+    @apply px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-200 text-muted;
+  }
+
+  .cal-nav-pill-active {
+    @apply bg-canvas text-ink shadow-sm;
+  }
+
+  .cal-cta-band {
+    @apply bg-surface-card rounded-lg p-12 text-center;
+  }
+
+  .cal-avatar {
+    @apply size-9 rounded-full bg-surface-card flex items-center justify-center font-medium text-ink;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  .cal-badge-pill {
+    @apply inline-flex items-center gap-1 bg-surface-card text-ink rounded-full px-3 py-1 text-[13px] font-medium;
+  }
+
+  .cal-badge-pill-orange {
+    background-color: var(--badge-orange);
+    color: white;
+  }
+
+  .cal-badge-pill-pink {
+    background-color: var(--badge-pink);
+    color: white;
+  }
+
+  .cal-badge-pill-violet {
+    background-color: var(--badge-violet);
+    color: white;
+  }
+
+  .cal-badge-pill-emerald {
+    background-color: var(--badge-emerald);
+    color: white;
+  }
+
+  .cal-rating-stars {
+    color: var(--badge-orange);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  .cal-input {
+    @apply bg-canvas text-ink font-sans text-base h-10 px-3.5 rounded-md border border-hairline outline-none transition-colors duration-150;
+  }
+
+  .cal-input:focus {
+    @apply border-ink;
+  }
+
+  .cal-category-tab {
+    @apply bg-transparent text-muted font-sans text-sm font-medium px-3.5 py-2 rounded-md transition-colors duration-150;
+  }
+
+  .cal-category-tab-active {
+    @apply bg-canvas text-ink shadow-sm;
+  }
+
+  .cal-top-nav {
+    @apply bg-canvas text-ink h-16 border-b border-hairline;
   }
 }
 
-/* Animations */
-@keyframes vertex-fade-in {
+/* ================================================================
+   Legacy "vertex" alias classes — mapped onto the token design
+   system so app surfaces render correctly in light & dark themes.
+   ================================================================ */
+@layer components {
+  .vertex-container {
+    @apply max-w-[1200px] mx-auto px-6;
+  }
+
+  .vertex-section {
+    @apply py-16 md:py-20 px-6 md:px-12;
+  }
+
+  .vertex-edge-glow {
+    position: relative;
+  }
+
+  .vertex-edge-glow::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -1px;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(180deg, transparent 0%, var(--brand-accent) 50%, transparent 100%);
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .vertex-edge-glow::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: -1px;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(180deg, transparent 0%, var(--brand-accent) 50%, transparent 100%);
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .vertex-heading {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+
+  .vertex-subtext {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .vertex-badge {
+    @apply inline-flex items-center gap-1.5 bg-surface-card rounded-full px-3 py-1 text-[13px] font-medium text-ink;
+  }
+
+  .vertex-card {
+    @apply bg-canvas border border-hairline rounded-lg;
+  }
+
+  .vertex-card-featured {
+    @apply bg-surface-card border border-hairline rounded-lg;
+  }
+
+  .vertex-input {
+    @apply w-full bg-canvas text-ink font-sans text-base h-10 px-3.5 rounded-md border border-hairline outline-none transition-colors duration-150;
+  }
+
+  .vertex-input:focus {
+    @apply border-ink;
+  }
+
+  .vertex-input::placeholder {
+    color: var(--muted);
+  }
+
+  .vertex-cta {
+    @apply bg-primary text-on-primary font-sans text-sm font-semibold rounded-md transition-colors duration-150;
+  }
+
+  .vertex-cta:hover {
+    @apply bg-primary-active;
+  }
+
+  .vertex-outline {
+    @apply bg-canvas text-ink font-sans text-sm font-medium rounded-md border border-hairline transition-colors duration-150;
+  }
+
+  .vertex-outline:hover {
+    @apply bg-surface-soft;
+  }
+
+  .vertex-nav-link {
+    @apply text-sm font-medium text-muted rounded-md px-3 py-2 transition-colors duration-200;
+  }
+
+  .vertex-nav-link:hover {
+    @apply text-ink;
+  }
+
+  .vertex-nav-link-active {
+    @apply text-ink bg-canvas shadow-sm;
+  }
+
+  .animate-vertex-fade-in {
+    animation: cal-fade-in 0.4s ease-out both;
+  }
+
+  .animate-vertex-slide-up {
+    animation: cal-slide-up 0.5s ease-out both;
+  }
+
+  .animate-vertex-slide-up-delay {
+    animation: cal-slide-up 0.5s ease-out 0.12s both;
+  }
+}
+
+@keyframes cal-fade-in {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes vertex-slide-up {
+@keyframes cal-slide-up {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-.animate-vertex-fade-in {
-  animation: vertex-fade-in 0.5s ease-out both;
+.animate-cal-fade-in {
+  animation: cal-fade-in 0.4s ease-out both;
 }
 
-.animate-vertex-fade-in {
-  animation: vertex-fade-in 0.4s ease-out both;
+.animate-cal-slide-up {
+  animation: cal-slide-up 0.5s ease-out both;
 }
 
-.animate-vertex-slide-up {
-  animation: vertex-slide-up 0.5s ease-out both;
-}
-
-.animate-vertex-slide-up-delay {
-  animation: vertex-slide-up 0.5s ease-out 0.12s both;
-}
-
-/* Edge Glow Gradient Lines (Sky Blue & Indigo) */
-.vertex-edge-glow {
-  position: relative;
-}
-
-.vertex-edge-glow::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -1px;
-  width: 1px;
-  height: 100%;
-  background: linear-gradient(180deg, transparent 0%, rgba(14, 165, 233, 0.25) 30%, rgba(99, 102, 241, 0.25) 70%, transparent 100%);
-  pointer-events: none;
-  z-index: 10;
-}
-
-.vertex-edge-glow::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: -1px;
-  width: 1px;
-  height: 100%;
-  background: linear-gradient(180deg, transparent 0%, rgba(14, 165, 233, 0.25) 30%, rgba(99, 102, 241, 0.25) 70%, transparent 100%);
-  pointer-events: none;
-  z-index: 10;
+.animate-cal-slide-up-delay {
+  animation: cal-slide-up 0.5s ease-out 0.12s both;
 }

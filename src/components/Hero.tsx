@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles, Calendar, Clock, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -27,7 +27,7 @@ const Hero = () => {
         company: "Vercel",
         details: "Remote · Full-time",
         match: "96% Match",
-        logoBg: "bg-black text-white border border-neutral-800",
+        logoBg: "bg-black text-white",
         logoText: "text-white",
       },
       {
@@ -45,8 +45,8 @@ const Hero = () => {
         company: "Linear",
         details: "Remote · Contract",
         match: "84% Match",
-        logoBg: "bg-white/10 text-white",
-        logoText: "text-white",
+        logoBg: "bg-surface-strong text-ink",
+        logoText: "text-ink",
       },
     ],
     backend: [
@@ -103,195 +103,185 @@ const Hero = () => {
         company: "Linear",
         details: "Remote · Full-time",
         match: "85% Match",
-        logoBg: "bg-white/10 text-white",
-        logoText: "text-white",
+        logoBg: "bg-surface-strong text-ink",
+        logoText: "text-ink",
       },
     ],
   };
 
   return (
-    <section className="vertex-section bg-black text-[#e5e2e1]">
-      {/* Intersection grid crosshairs at corners */}
-      <div className="absolute -top-1.25 -left-1.25 text-[#334155] font-mono text-[10px] select-none pointer-events-none">+</div>
-      <div className="absolute -top-1.25 -right-1.25 text-[#334155] font-mono text-[10px] select-none pointer-events-none">+</div>
-      <div className="absolute -bottom-1.25 -left-1.25 text-[#334155] font-mono text-[10px] select-none pointer-events-none">+</div>
-      <div className="absolute -bottom-1.25 -right-1.25 text-[#334155] font-mono text-[10px] select-none pointer-events-none">+</div>
+    <section className="cal-section relative">
+      <div className="cal-container">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+          {/* Left Column - 7/12 (approx 7/5 split) */}
+          <div className="lg:col-span-7 space-y-8 pt-4 lg:pt-0">
+            {/* AI Badge */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              className="inline-flex"
+            >
+              <span className="cal-badge">
+                <Sparkles className="size-3.5 text-brand-accent" />
+                <span>AI-powered career automation</span>
+              </span>
+            </motion.div>
 
-      <div className="max-w-4xl mx-auto flex flex-col items-center text-center space-y-8">
-        {/* AI Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-        >
-          <div className="vertex-badge">
-            <Sparkles className="size-3.5 text-[#89ceff]" />
-            <span>AI-powered career automation</span>
-          </div>
-        </motion.div>
+            {/* Hero Heading */}
+            <motion.h1
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="cal-display-xl text-ink text-balance"
+            >
+              Land your dream job with intelligent assistance
+            </motion.h1>
 
-        {/* Hero Heading (Space Grotesk Headline) */}
-        <motion.h1
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-4xl font-bold tracking-tight text-balance md:text-5xl lg:text-6xl text-white font-heading leading-[1.1]"
-          style={{ letterSpacing: "-0.02em" }}
-        >
-          Land your dream job with intelligent assistance
-        </motion.h1>
+            {/* Subtitle */}
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="cal-body text-muted max-w-xl"
+            >
+              Stop scrolling through endless listings. Our AI analyzes your profile,
+              grades your resume, drafts cover letters, and matches you with jobs
+              that fit your skills and aspirations.
+            </motion.p>
 
-        {/* Subtitle */}
-        <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-[#94A3B8] text-balance max-w-2xl text-base md:text-lg leading-relaxed font-sans"
-        >
-          Stop scrolling through endless listings. Our AI analyzes your profile,
-          grades your resume, drafts cover letters, and matches you with jobs
-          that fit your skills and aspirations.
-        </motion.p>
+            {/* CTA Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="flex flex-col sm:flex-row gap-3"
+            >
+              <Button
+                size="lg"
+                render={<Link href="/dashboard" />}
+                nativeButton={false}
+                className="cal-button-primary"
+              >
+                Start free trial
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                render={<Link href="/jobs" />}
+                nativeButton={false}
+                className="cal-button-secondary inline-flex items-center gap-2"
+              >
+                Browse Jobs
+                <ArrowRight className="size-4" />
+              </Button>
+            </motion.div>
 
-        {/* CTA Buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="flex flex-col sm:flex-row gap-3"
-        >
-          <Button
-            size="lg"
-            render={<Link href="/dashboard" />}
-            nativeButton={false}
-            className="vertex-cta"
-          >
-            Start free trial
-          </Button>
-          <Button
-            size="lg"
-            variant="outline"
-            render={<Link href="/jobs" />}
-            nativeButton={false}
-            className="vertex-outline"
-          >
-            Browse Jobs
-            <ArrowRight className="ml-2 size-4" />
-          </Button>
-        </motion.div>
+            {/* Nav Pill Group */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.35 }}
+              className="cal-nav-pill-group"
+            >
+              <button
+                onClick={() => setActiveTab("react")}
+                className={`cal-nav-pill ${activeTab === "react" ? "cal-nav-pill-active" : ""}`}
+              >
+                React Developers
+              </button>
+              <button
+                onClick={() => setActiveTab("backend")}
+                className={`cal-nav-pill ${activeTab === "backend" ? "cal-nav-pill-active" : ""}`}
+              >
+                Backend Engineers
+              </button>
+              <button
+                onClick={() => setActiveTab("design")}
+                className={`cal-nav-pill ${activeTab === "design" ? "cal-nav-pill-active" : ""}`}
+              >
+                Product Designers
+              </button>
+            </motion.div>
 
-        {/* Interactive Cal.com Signature nav-pill-group */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.35 }}
-          className="bg-[#1c1b1b] p-1 rounded-full flex items-center gap-1 border border-neutral-800"
-        >
-          <button
-            onClick={() => setActiveTab("react")}
-            className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-all duration-200 ${
-              activeTab === "react"
-                ? "bg-white text-black shadow-sm"
-                : "text-[#94A3B8] hover:text-white"
-            }`}
-          >
-            React Developers
-          </button>
-          <button
-            onClick={() => setActiveTab("backend")}
-            className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-all duration-200 ${
-              activeTab === "backend"
-                ? "bg-white text-black shadow-sm"
-                : "text-[#94A3B8] hover:text-white"
-            }`}
-          >
-            Backend Engineers
-          </button>
-          <button
-            onClick={() => setActiveTab("design")}
-            className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-all duration-200 ${
-              activeTab === "design"
-                ? "bg-white text-black shadow-sm"
-                : "text-[#94A3B8] hover:text-white"
-            }`}
-          >
-            Product Designers
-          </button>
-        </motion.div>
-
-        {/* Mockup Card — Job Match Preview */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="w-full max-w-3xl mt-4"
-        >
-          <div className="border border-dashed border-[#334155] bg-[#121212] rounded-2xl shadow-sm overflow-hidden text-[#e5e2e1]">
-            {/* Window chrome bar */}
-            <div className="flex items-center gap-2 px-5 py-3 border-b border-dashed border-[#334155] bg-[#1c1b1b]">
-              <div className="flex gap-1.5">
-                <div className="size-2 rounded-full bg-neutral-800" />
-                <div className="size-2 rounded-full bg-neutral-800" />
-                <div className="size-2 rounded-full bg-neutral-800" />
+            {/* Social proof */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+              className="flex items-center gap-4 text-muted pt-4"
+            >
+              <div className="flex items-center -space-x-2">
+                <div className="cal-avatar border-2 border-canvas">JD</div>
+                <div className="cal-avatar border-2 border-canvas">SM</div>
+                <div className="cal-avatar border-2 border-canvas">TR</div>
+                <div className="cal-avatar border-2 border-canvas">MK</div>
               </div>
-              <span className="text-xs text-[#94A3B8] ml-2 font-medium font-mono">AI Job Board — Dashboard</span>
-            </div>
+              <p className="cal-body-sm">
+                Join 10,000+ professionals finding their next opportunity
+              </p>
+            </motion.div>
+          </div>
 
-            {/* Content Container with animation */}
-            <div className="p-6 space-y-4 min-h-62.5 relative bg-black/40">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeTab}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.25 }}
-                  className="space-y-4"
-                >
-                  {jobMatches[activeTab].map((job, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-center justify-between p-4 rounded-xl border border-dashed border-[#334155] bg-[#131313] hover:border-white/20 transition-all duration-200"
+          {/* Right Column - 5/12 - Hero App Mockup Card */}
+          <div className="lg:col-span-5">
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="relative"
+            >
+              <div className="cal-mockup-card min-h-[420px]">
+                {/* Window chrome bar */}
+                <div className="flex items-center gap-2 px-4 py-3 border-b border-hairline bg-surface-soft rounded-t-xl">
+                  <div className="flex gap-1.5">
+                    <div className="size-2.5 rounded-full bg-surface-strong" />
+                    <div className="size-2.5 rounded-full bg-surface-strong" />
+                    <div className="size-2.5 rounded-full bg-surface-strong" />
+                  </div>
+                  <span className="cal-caption text-muted ml-2 font-mono">AI Job Board — Dashboard</span>
+                </div>
+
+                {/* Content Container with animation */}
+                <div className="p-6 space-y-4 min-h-[340px] relative">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={activeTab}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.25 }}
+                      className="space-y-3"
                     >
-                      <div className="flex items-center gap-4">
-                        <div className={`size-10 ${job.logoBg} rounded-lg flex items-center justify-center font-bold`}>
-                          <span className={`${job.logoText} text-sm`}>{job.initial}</span>
+                      {jobMatches[activeTab].map((job, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-center justify-between p-4 rounded-lg border border-hairline bg-canvas hover:border-surface-strong transition-colors duration-200"
+                        >
+                          <div className="flex items-center gap-4">
+                            <div className={`size-10 ${job.logoBg} rounded-lg flex items-center justify-center font-bold`}>
+                              <span className={`${job.logoText} text-sm`}>{job.initial}</span>
+                            </div>
+                            <div className="text-left">
+                              <p className="cal-title-sm text-ink">{job.role}</p>
+                              <p className="cal-caption text-muted">{job.company} · {job.details}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <span className="cal-badge-pill cal-badge-pill-emerald">
+                              <CheckCircle2 className="size-3" />
+                              {job.match}
+                            </span>
+                          </div>
                         </div>
-                        <div className="text-left">
-                          <p className="text-sm font-semibold text-white">{job.role}</p>
-                          <p className="text-xs text-[#94A3B8]">{job.company} · {job.details}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className="text-xs font-semibold text-[#89ceff] bg-[#89ceff]/10 px-2.5 py-1 rounded-full border border-[#89ceff]/20 font-mono uppercase">
-                          {job.match}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </motion.div>
-              </AnimatePresence>
-            </div>
+                      ))}
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+              </div>
+            </motion.div>
           </div>
-        </motion.div>
-
-        {/* Social proof */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-          className="flex items-center gap-4 text-[#94A3B8] pt-4"
-        >
-          <div className="flex items-center -space-x-2">
-            <div className="size-7 rounded-full bg-[#1E293B] flex items-center justify-center text-[10px] font-bold text-[#94A3B8] border-2 border-black">JD</div>
-            <div className="size-7 rounded-full bg-[#1E293B] flex items-center justify-center text-[10px] font-bold text-[#94A3B8] border-2 border-black">SM</div>
-            <div className="size-7 rounded-full bg-[#1E293B] flex items-center justify-center text-[10px] font-bold text-[#94A3B8] border-2 border-black">TR</div>
-            <div className="size-7 rounded-full bg-[#1E293B] flex items-center justify-center text-[10px] font-bold text-[#94A3B8] border-2 border-black">MK</div>
-          </div>
-          <p className="text-sm">
-            Join 10,000+ professionals finding their next opportunity
-          </p>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
