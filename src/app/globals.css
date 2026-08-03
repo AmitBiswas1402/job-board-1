@@ -89,8 +89,8 @@
   --foreground: #111111;
   --ink: #111111;
   --body: #374151;
-  --muted: #6b7280;
-  --muted-soft: #898989;
+  --muted: #ececec;
+  --muted-soft: #e0e0e0;
   --muted-foreground: #6b7280;
   --hairline: #e5e7eb;
   --hairline-soft: #f3f4f6;
@@ -148,8 +148,8 @@
   --foreground: #ffffff;
   --ink: #ffffff;
   --body: #a1a1aa;
-  --muted: #6b7280;
-  --muted-soft: #898989;
+  --muted: #232323;
+  --muted-soft: #2a2a2a;
   --muted-foreground: #a1a1aa;
   --hairline: #1a1a1a;
   --hairline-soft: #1a1a1a;
@@ -249,7 +249,7 @@
   }
 
   .cal-nav-link {
-    @apply text-sm font-medium text-muted rounded-md px-3 py-2 transition-colors duration-200;
+    @apply text-sm font-medium text-muted-foreground rounded-md px-3 py-2 transition-colors duration-200;
   }
 
   .cal-nav-link-active {
@@ -354,7 +354,7 @@
   }
 
   .cal-button-text-link:hover {
-    @apply text-muted;
+    @apply text-muted-foreground;
   }
 
   .cal-text-link {
@@ -362,7 +362,7 @@
   }
 
   .cal-text-link:hover {
-    @apply text-muted;
+    @apply text-muted-foreground;
   }
 
   .cal-nav-pill-group {
@@ -370,7 +370,7 @@
   }
 
   .cal-nav-pill {
-    @apply px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-200 text-muted;
+    @apply px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-200 text-muted-foreground;
   }
 
   .cal-nav-pill-active {
@@ -428,7 +428,7 @@
   }
 
   .cal-category-tab {
-    @apply bg-transparent text-muted font-sans text-sm font-medium px-3.5 py-2 rounded-md transition-colors duration-150;
+    @apply bg-transparent text-muted-foreground font-sans text-sm font-medium px-3.5 py-2 rounded-md transition-colors duration-150;
   }
 
   .cal-category-tab-active {
@@ -446,7 +446,7 @@
    ================================================================ */
 @layer components {
   .vertex-container {
-    @apply max-w-[1200px] mx-auto px-6;
+    @apply max-w-[1200px] mx-auto;
   }
 
   .vertex-section {
@@ -496,7 +496,7 @@
     font-size: 14px;
     font-weight: 400;
     line-height: 1.5;
-    color: var(--muted);
+    color: var(--muted-foreground);
   }
 
   .vertex-badge {
@@ -504,7 +504,11 @@
   }
 
   .vertex-card {
-    @apply bg-canvas border border-hairline rounded-lg;
+    @apply bg-canvas border border-hairline rounded-xl shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.04)];
+  }
+
+  .vertex-card-hover {
+    @apply transition-shadow duration-200 hover:shadow-[0_2px_4px_rgba(0,0,0,0.05),0_8px_24px_rgba(0,0,0,0.08)];
   }
 
   .vertex-card-featured {
@@ -520,7 +524,7 @@
   }
 
   .vertex-input::placeholder {
-    color: var(--muted);
+    color: var(--muted-foreground);
   }
 
   .vertex-cta {
@@ -540,7 +544,7 @@
   }
 
   .vertex-nav-link {
-    @apply text-sm font-medium text-muted rounded-md px-3 py-2 transition-colors duration-200;
+    @apply text-sm font-medium text-muted-foreground rounded-md px-3 py-2 transition-colors duration-200;
   }
 
   .vertex-nav-link:hover {
@@ -584,4 +588,28 @@
 
 .animate-cal-slide-up-delay {
   animation: cal-slide-up 0.5s ease-out 0.12s both;
+}
+
+/* Thin, subtle scrollbars for horizontal board overflow */
+.board-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--muted-soft) transparent;
+}
+
+.board-scrollbar::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.board-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.board-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--muted-soft);
+  border-radius: 9999px;
+}
+
+.board-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
 }

@@ -45,6 +45,7 @@ export default function JobsPage() {
 
   // Saved jobs local state for toggle animation demo
   const [savedJobIds, setSavedJobIds] = useState<number[]>([]);
+  const [savedExternalIds, setSavedExternalIds] = useState<string[]>([]);
 
   // Function to fetch jobs from API
   const fetchJobs = useCallback(async () => {
@@ -82,6 +83,22 @@ export default function JobsPage() {
     return () => clearTimeout(delayDebounce);
   }, [fetchJobs]);
 
+  // Sync already-saved jobs from the application tracker (best effort)
+  useEffect(() => {
+    fetch("/api/application-tracker")
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data: { job: { externalJobId: string | null } }[]) => {
+        if (Array.isArray(data)) {
+          const externalIds = data
+            .map((a) => a.job?.externalJobId)
+            .filter(Boolean)
+            .map(String);
+          setSavedExternalIds(externalIds);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   const handleReset = () => {
     setRole("");
     setLocation("");
@@ -89,11 +106,39 @@ export default function JobsPage() {
     setEmploymentType("all");
   };
 
-  const toggleSaveJob = (id: number) => {
+  const toggleSaveJob = async (id: number) => {
+    const job = jobs.find((j) => j.id === id);
+    if (!job) return;
+
     if (savedJobIds.includes(id)) {
       setSavedJobIds(savedJobIds.filter((savedId) => savedId !== id));
-    } else {
-      setSavedJobIds([...savedJobIds, id]);
+      return;
+    }
+
+    // Optimistically mark as saved, then persist to the tracker.
+    setSavedJobIds((prev) => [...prev, id]);
+    setSavedExternalIds((prev) => [...prev, String(id)]);
+    try {
+      await fetch("/api/application-tracker", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          job: {
+            externalJobId: String(job.id),
+            title: job.title,
+            company: job.company,
+            companyLogo: null,
+            location: job.location,
+            employmentType: job.employmentType,
+            salary: job.salary,
+            description: job.description,
+            applyUrl: job.applyUrl,
+            source: job.source || "Adzuna",
+          },
+        }),
+      });
+    } catch (err) {
+      console.error("Failed to save job to tracker:", err);
     }
   };
 
@@ -290,7 +335,7 @@ export default function JobsPage() {
           ) : jobs.length === 0 ? (
             /* Empty State */
             <div className="vertex-card py-16 px-4 text-center max-w-xl mx-auto">
-              <div className="size-12 bg-muted border rounded-2xl flex items-center justify-center text-muted-foreground mx-auto mb-4">
+              <div className="size-12 bg-surface-soft border border-hairline rounded-2xl flex items-center justify-center text-muted-foreground mx-auto mb-4">
                 <Briefcase className="size-6" />
               </div>
               <h3 className="text-lg font-semibold text-foreground mb-2">
@@ -309,11 +354,13 @@ export default function JobsPage() {
             /* Jobs List Grid */
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
               {jobs.map((job) => {
-                const isSaved = savedJobIds.includes(job.id);
+                const isSaved =
+                  savedJobIds.includes(job.id) ||
+                  savedExternalIds.includes(String(job.id));
                 return (
                   <div
                     key={job.id}
-                    className="group/card vertex-card p-6 flex flex-col justify-between relative overflow-hidden hover:-translate-y-0.5 transition-all duration-300"
+                    className="group/card vertex-card p-6 flex flex-col justify-between relative overflow-hidden hover:-translate-y-0.5 hover:border-foreground/20 hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] transition-all duration-300"
                   >
                     {/* Core Card Section */}
                     <div>
@@ -345,7 +392,7 @@ export default function JobsPage() {
                           className={`size-8 rounded-full flex items-center justify-center border hover:scale-105 active:scale-95 transition-all cursor-pointer ${
                             isSaved
                               ? "bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/30 text-red-500"
-                              : "bg-muted border-border text-muted-foreground hover:text-foreground"
+                              : "bg-surface-soft border-hairline text-muted-foreground hover:text-foreground"
                           }`}
                         >
                           <Heart

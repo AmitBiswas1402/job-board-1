@@ -249,7 +249,7 @@ export default function CoverLetterPage() {
                     placeholder="Paste target job responsibilities and requirement keywords details here..."
                     value={jobDescription}
                     onChange={(e) => setJobDescription(e.target.value)}
-                    className="vertex-input resize-y leading-relaxed"
+                    className="vertex-input h-auto! min-h-[150px] resize-y leading-relaxed"
                   />
                 </div>
 
@@ -438,7 +438,7 @@ export default function CoverLetterPage() {
               ) : (
                 /* Empty Initial State screen */
                 <div className="vertex-card p-8 text-center flex flex-col items-center justify-center min-h-[520px]">
-                  <div className="size-12 bg-muted border rounded-2xl flex items-center justify-center text-muted-foreground mb-4 animate-pulse">
+                  <div className="size-12 bg-surface-soft border border-hairline rounded-2xl flex items-center justify-center text-muted-foreground mb-4 animate-pulse">
                     <Sparkles className="size-6" />
                   </div>
                   <h3 className="text-base font-semibold text-foreground mb-2">Ready to Draft</h3>

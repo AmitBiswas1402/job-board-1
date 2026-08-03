@@ -250,7 +250,7 @@ export default function ATSScorePage() {
                     placeholder="Paste the job requirements, responsibilities, and qualifications details here..."
                     value={jobDescription}
                     onChange={(e) => setJobDescription(e.target.value)}
-                    className="vertex-input resize-y leading-relaxed"
+                    className="vertex-input h-auto! min-h-[150px] resize-y leading-relaxed"
                   />
                 </div>
 
@@ -437,7 +437,7 @@ export default function ATSScorePage() {
                       {result.suggestions.map((rec, i) => (
                         <div
                           key={i}
-                          className="flex items-start gap-2.5 p-3 rounded-xl border text-xs leading-relaxed text-foreground/80"
+                          className="flex items-start gap-2.5 p-3 rounded-xl border border-hairline bg-surface-soft text-xs leading-relaxed text-foreground/80"
                         >
                           <ChevronRight className="size-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                           <span>{rec}</span>
@@ -468,7 +468,7 @@ export default function ATSScorePage() {
               ) : (
                 /* Empty / Initial State */
                 <div className="vertex-card p-8 text-center flex flex-col items-center justify-center min-h-[500px]">
-                  <div className="size-12 bg-muted border rounded-2xl flex items-center justify-center text-muted-foreground mb-4 animate-pulse">
+                  <div className="size-12 bg-surface-soft border border-hairline rounded-2xl flex items-center justify-center text-muted-foreground mb-4 animate-pulse">
                     <Sparkles className="size-6" />
                   </div>
                   <h3 className="text-base font-semibold text-foreground mb-2">Ready for ATS Evaluation</h3>

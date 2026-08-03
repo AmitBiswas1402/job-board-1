@@ -462,10 +462,8 @@ export async function PATCH(request: Request) {
     }
 
     const updateFields: Record<string, unknown> = {};
-    let statusChanged = false;
 
     if (status !== undefined && status !== targetApp.status) {
-      statusChanged = true;
       updateFields.status = status;
       if (status === "Applied" && !targetApp.appliedAt) {
         updateFields.appliedAt = new Date();

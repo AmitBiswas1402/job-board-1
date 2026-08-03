@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { ArrowRight, Sparkles, Calendar, Clock, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Sparkles, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -143,7 +143,7 @@ const Hero = () => {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="cal-body text-muted max-w-xl"
+              className="cal-body text-muted-foreground max-w-xl"
             >
               Stop scrolling through endless listings. Our AI analyzes your profile,
               grades your resume, drafts cover letters, and matches you with jobs
@@ -209,7 +209,7 @@ const Hero = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.6 }}
-              className="flex items-center gap-4 text-muted pt-4"
+              className="flex items-center gap-4 text-muted-foreground pt-4"
             >
               <div className="flex items-center -space-x-2">
                 <div className="cal-avatar border-2 border-canvas">JD</div>
@@ -231,7 +231,7 @@ const Hero = () => {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="relative"
             >
-              <div className="cal-mockup-card min-h-[420px]">
+              <div className="cal-mockup-card min-h-105">
                 {/* Window chrome bar */}
                 <div className="flex items-center gap-2 px-4 py-3 border-b border-hairline bg-surface-soft rounded-t-xl">
                   <div className="flex gap-1.5">
@@ -239,11 +239,11 @@ const Hero = () => {
                     <div className="size-2.5 rounded-full bg-surface-strong" />
                     <div className="size-2.5 rounded-full bg-surface-strong" />
                   </div>
-                  <span className="cal-caption text-muted ml-2 font-mono">AI Job Board — Dashboard</span>
+                  <span className="cal-caption text-muted-foreground ml-2 font-mono">AI Job Board — Dashboard</span>
                 </div>
 
                 {/* Content Container with animation */}
-                <div className="p-6 space-y-4 min-h-[340px] relative">
+                <div className="p-6 space-y-4 min-h-85 relative">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={activeTab}
@@ -264,7 +264,7 @@ const Hero = () => {
                             </div>
                             <div className="text-left">
                               <p className="cal-title-sm text-ink">{job.role}</p>
-                              <p className="cal-caption text-muted">{job.company} · {job.details}</p>
+                              <p className="cal-caption text-muted-foreground">{job.company} · {job.details}</p>
                             </div>
                           </div>
                           <div className="flex items-center gap-3">

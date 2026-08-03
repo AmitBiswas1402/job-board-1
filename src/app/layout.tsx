@@ -23,8 +23,12 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI Job Board",
-  description: "AI Job Board",
+  title: {
+    default: "AI Job Board — Smart Job Search & Career Command Center",
+    template: "%s | AI Job Board",
+  },
+  description:
+    "Find matched tech jobs, audit your resume with AI ATS scoring, draft tailored cover letters, and track every application — all in one place.",
 };
 
 export default function RootLayout({

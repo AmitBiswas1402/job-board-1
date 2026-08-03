@@ -219,7 +219,7 @@ export default function IndustryInsightsPage() {
                   <span className="size-1.5 rounded-full bg-brand-accent" />
                   Latest Technical News & Write-ups
                 </h2>
-                <span className="text-xs text-muted font-mono">Sources: web.dev, TechCrunch, Vercel, InfoQ</span>
+                <span className="text-xs text-muted-foreground font-mono">Sources: web.dev, TechCrunch, Vercel, InfoQ</span>
               </div>
 
               {insights?.latestNews ? (
@@ -248,7 +248,7 @@ export default function IndustryInsightsPage() {
                       {/* Content details */}
                       <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                         <div className="space-y-2">
-                          <span className="text-[10px] text-muted font-mono">{news.time}</span>
+                          <span className="text-[10px] text-muted-foreground font-mono">{news.time}</span>
                           <h4 className="text-sm font-semibold text-ink line-clamp-2 leading-snug group-hover:text-brand-accent transition-colors font-heading">
                             {news.headline}
                           </h4>
@@ -296,7 +296,7 @@ export default function IndustryInsightsPage() {
                     >
                       {/* Tweet header (User metadata) */}
                       <div className="flex items-center gap-3">
-                        <div className="size-8 rounded-full bg-surface-soft flex items-center justify-center text-[10px] font-bold text-muted">
+                        <div className="size-8 rounded-full bg-surface-soft flex items-center justify-center text-[10px] font-bold text-muted-foreground">
                           {tweet.author.split(" ").map(n => n[0]).join("")}
                         </div>
                         <div>
@@ -306,7 +306,7 @@ export default function IndustryInsightsPage() {
                               <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                             </svg>
                           </div>
-                          <span className="text-[10px] text-muted font-semibold font-mono">{tweet.handle} · {tweet.time}</span>
+                          <span className="text-[10px] text-muted-foreground font-semibold font-mono">{tweet.handle} · {tweet.time}</span>
                         </div>
                       </div>
 
@@ -316,7 +316,7 @@ export default function IndustryInsightsPage() {
                       </p>
 
                       {/* Action Metrics Row */}
-                      <div className="flex items-center justify-between pt-2 text-muted border-t border-hairline">
+                      <div className="flex items-center justify-between pt-2 text-muted-foreground border-t border-hairline">
                         <button className="flex items-center gap-1.5 hover:text-ink transition-colors text-[10px]">
                           <MessageSquare className="size-3.5" />
                           <span>42</span>
@@ -353,7 +353,7 @@ export default function IndustryInsightsPage() {
                 <Sparkles className="size-5 text-brand-accent" />
                 Specific Tech Deep-Dive Search
               </h2>
-              <p className="text-xs text-muted mt-1 leading-relaxed font-sans">
+              <p className="text-xs text-muted-foreground mt-1 leading-relaxed font-sans">
                 Query a specific stack, framework, or skill below to generate localized salary ranges, hiring hubs, demand indices, and recruiter AI takeaways.
               </p>
             </div>
@@ -363,7 +363,7 @@ export default function IndustryInsightsPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
                 {/* Tech query box */}
                 <div className="space-y-2">
-                  <label className="text-[11px] font-bold uppercase tracking-wider text-muted font-mono flex items-center gap-1.5 ml-1">
+                  <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground font-mono flex items-center gap-1.5 ml-1">
                     <Search className="size-3" /> Tech Stack
                   </label>
                   <input
@@ -377,7 +377,7 @@ export default function IndustryInsightsPage() {
 
                 {/* Location selector */}
                 <div className="space-y-2">
-                  <label className="text-[11px] font-bold uppercase tracking-wider text-muted font-mono flex items-center gap-1.5 ml-1">
+                  <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground font-mono flex items-center gap-1.5 ml-1">
                     <MapPin className="size-3" /> Location
                   </label>
                   <div className="relative">
@@ -393,13 +393,13 @@ export default function IndustryInsightsPage() {
                       <option value="Canada">Canada</option>
                       <option value="Germany">Germany</option>
                     </select>
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted text-xs">▼</div>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground text-xs">▼</div>
                   </div>
                 </div>
 
                 {/* Experience selector */}
                 <div className="space-y-2">
-                  <label className="text-[11px] font-bold uppercase tracking-wider text-muted font-mono flex items-center gap-1.5 ml-1">
+                  <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground font-mono flex items-center gap-1.5 ml-1">
                     <Clock className="size-3" /> Experience
                   </label>
                   <div className="relative">
@@ -413,7 +413,7 @@ export default function IndustryInsightsPage() {
                       <option value="6-9 Years">Senior (6-9 Years)</option>
                       <option value="10+ Years">Lead/Staff (10+ Years)</option>
                     </select>
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted text-xs">▼</div>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground text-xs">▼</div>
                   </div>
                 </div>
 
@@ -454,7 +454,7 @@ export default function IndustryInsightsPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {/* Card 1: Average Salary */}
                   <div className="vertex-card p-5">
-                    <span className="text-[9px] uppercase tracking-wider font-bold text-muted font-mono">Average Salary</span>
+                    <span className="text-[9px] uppercase tracking-wider font-bold text-muted-foreground font-mono">Average Salary</span>
                     <h3 className="text-2xl font-bold text-ink mt-3 font-mono">{insights.overview.averageSalary}</h3>
                     <span className="text-[10px] font-semibold text-success bg-success/10 border border-success/20 px-2 py-0.5 rounded-full inline-block mt-2">
                       {insights.overview.salaryChange}
@@ -463,21 +463,21 @@ export default function IndustryInsightsPage() {
 
                   {/* Card 2: Active Openings */}
                   <div className="vertex-card p-5">
-                    <span className="text-[9px] uppercase tracking-wider font-bold text-muted font-mono">Active Job Openings</span>
+                    <span className="text-[9px] uppercase tracking-wider font-bold text-muted-foreground font-mono">Active Job Openings</span>
                     <h3 className="text-2xl font-bold text-ink mt-3 font-mono">{insights.overview.activeJobs}</h3>
-                    <span className="text-[10px] text-muted font-semibold inline-block mt-2">Real-time indexed</span>
+                    <span className="text-[10px] text-muted-foreground font-semibold inline-block mt-2">Real-time indexed</span>
                   </div>
 
                   {/* Card 3: Hiring Trend */}
                   <div className="vertex-card p-5">
-                    <span className="text-[9px] uppercase tracking-wider font-bold text-muted font-mono">Hiring Trend Index</span>
+                    <span className="text-[9px] uppercase tracking-wider font-bold text-muted-foreground font-mono">Hiring Trend Index</span>
                     <h3 className="text-2xl font-bold text-success mt-3">{insights.overview.hiringTrend}</h3>
-                    <span className="text-[10px] text-muted font-semibold inline-block mt-2">{insights.overview.hiringTrendSub}</span>
+                    <span className="text-[10px] text-muted-foreground font-semibold inline-block mt-2">{insights.overview.hiringTrendSub}</span>
                   </div>
 
                   {/* Card 4: Top Recruiter */}
                   <div className="vertex-card p-5">
-                    <span className="text-[9px] uppercase tracking-wider font-bold text-muted font-mono">Top Hiring Recruiter</span>
+                    <span className="text-[9px] uppercase tracking-wider font-bold text-muted-foreground font-mono">Top Hiring Recruiter</span>
                     <h3 className="text-2xl font-bold text-ink mt-3 font-heading">{insights.overview.topCompany}</h3>
                     <div className="flex items-center gap-1.5 mt-2">
                       <img
@@ -488,7 +488,7 @@ export default function IndustryInsightsPage() {
                         alt="Recruiter logo"
                         className="size-4 rounded object-contain shrink-0 bg-surface-soft p-0.5 border"
                       />
-                      <span className="text-[10px] font-semibold text-muted font-mono">{insights.overview.topCompanyLogo}</span>
+                      <span className="text-[10px] font-semibold text-muted-foreground font-mono">{insights.overview.topCompanyLogo}</span>
                     </div>
                   </div>
                 </div>
@@ -505,8 +505,8 @@ export default function IndustryInsightsPage() {
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={insights.charts.salaryDistribution} margin={{ top: 5, right: 5, left: -25, bottom: 5 }}>
                           <CartesianGrid strokeDasharray="3 3" stroke="var(--hairline)" vertical={false} />
-                          <XAxis dataKey="experience" stroke="currentColor" className="text-muted font-mono" fontSize={10} tickLine={false} />
-                          <YAxis stroke="currentColor" className="text-muted font-mono" fontSize={10} tickLine={false} axisLine={false} />
+                          <XAxis dataKey="experience" stroke="currentColor" className="text-muted-foreground font-mono" fontSize={10} tickLine={false} />
+                          <YAxis stroke="currentColor" className="text-muted-foreground font-mono" fontSize={10} tickLine={false} axisLine={false} />
                           <Tooltip
                             contentStyle={{ backgroundColor: "var(--card)", borderColor: "var(--hairline)", borderRadius: "8px" }}
                             labelStyle={{ color: "var(--ink)", fontWeight: "bold", fontSize: 11 }}
@@ -532,8 +532,8 @@ export default function IndustryInsightsPage() {
                       <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={insights.charts.hiringTrend} margin={{ top: 5, right: 10, left: -25, bottom: 5 }}>
                           <CartesianGrid strokeDasharray="3 3" stroke="var(--hairline)" vertical={false} />
-                          <XAxis dataKey="month" stroke="currentColor" className="text-muted font-mono" fontSize={10} tickLine={false} />
-                          <YAxis stroke="currentColor" className="text-muted font-mono" fontSize={10} tickLine={false} axisLine={false} />
+                          <XAxis dataKey="month" stroke="currentColor" className="text-muted-foreground font-mono" fontSize={10} tickLine={false} />
+                          <YAxis stroke="currentColor" className="text-muted-foreground font-mono" fontSize={10} tickLine={false} axisLine={false} />
                           <Tooltip
                             contentStyle={{ backgroundColor: "var(--card)", borderColor: "var(--hairline)", borderRadius: "8px" }}
                             labelStyle={{ color: "var(--ink)", fontWeight: "bold", fontSize: 11 }}
@@ -591,9 +591,9 @@ export default function IndustryInsightsPage() {
             ) : (
               /* Initial State message if no insights loaded */
               <div className="vertex-card p-8 text-center flex flex-col items-center justify-center min-h-[200px]">
-                <Sparkles className="size-6 text-muted mb-2" />
+                <Sparkles className="size-6 text-muted-foreground mb-2" />
                 <h3 className="text-sm font-semibold text-ink mb-1 font-heading">Enter a Tech Stack to Deep-Dive</h3>
-                <p className="text-xs text-muted font-sans">Press the search button to generate personalized market analytics.</p>
+                <p className="text-xs text-muted-foreground font-sans">Press the search button to generate personalized market analytics.</p>
               </div>
             )}
 
